@@ -1,13 +1,16 @@
 from django.utils.translation import gettext_lazy as _
 
-ROLES = (
-    ('C', _('Client')),
-    ('E', _('Employee')),
+CLIENT = 1
+AGENT = 2
+
+ROLE_CHOICES = (
+    (CLIENT, 'Client'),
+    (AGENT, 'Agent'),
 )
 
+
 GENDERS = (
-    ('Male', _('M')),
-    ('Female', _('F')),
-    ('None', _('N'))
+    ('Male', _('Male')),
+    ('Female', _('Female')),
 )
 

@@ -1,0 +1,15 @@
+<h1>Client Details</h1>
+<ul>
+    <li>Email: {{ client.user.email }}</li>
+    <li>First Name: {{ client.user.first_name }}</li>
+    <li>Last Name: {{ client.user.last_name }}</li>
+    <li>Address: {{ client.address }}</li>
+    <li>Phone: {{ client.phone }}</li>
+    <li>Gender: {{ client.user.gender }}</li>
+    <li>Age: {{ client.user.age }}</li>
+    <li>Date Created: {{ client.user.created_at }}</li>
+    <li>Last Date Updated: {{ client.user.updated_at }}</li>
+</ul>
+<a class="btn btn-success" href="{% url 'logout' %}">Logout</a>
+<a class="btn btn-success" href="{% url 'change_password' client.user.id%}">Change password</a>
+<a class="btn btn-success" href="{% url 'client_update' client.user.id%}">Update Data</a>

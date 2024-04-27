@@ -1,0 +1,10 @@
+<div class="form-container sign-in-container">
+    <form method="POST" action="{% url 'contract_create' user.id%}">
+        {% csrf_token %}
+        <h1>Create contract</h1>
+            <p>
+                {{form.as_p}}
+            </p>    
+        <input class="btn btn-success" type="submit" value="Submit" />
+    </form>
+</div>

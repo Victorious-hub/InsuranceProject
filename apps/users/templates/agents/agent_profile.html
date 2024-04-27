@@ -1,0 +1,14 @@
+<h1>Agent Details</h1>
+<ul>
+    <li>Email: {{ agent.user.email }}</li>
+    <li>First Name: {{ agent.user.first_name }}</li>
+    <li>Last Name: {{ agent.user.last_name }}</li>
+
+    <li>Affiliate name: {{ agent.affiliate.name }}</li>
+    <li>Affiliate address: {{ agent.affiliate.address }}</li>
+    <li>Affiliate phone: {{ agent.affiliate.phone }}</li>
+</ul>
+<a class="btn btn-success" href="{% url 'logout' %}">Logout</a>
+<a class="btn btn-success" href="{% url 'change_password' agent.user.id%}">Change password</a>
+<a class="btn btn-success" href="{% url 'agent_update' agent.user.id%}">Update Data</a>
+<a class="btn btn-success" href="{% url 'contract_create' agent.user.id%}">Create Contract</a>
