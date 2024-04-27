@@ -1,8 +1,0 @@
-<form method="POST" action="{% url 'agent_register' %}">
-    {% csrf_token %}
-        <p>
-            {{form.as_p}}
-        </p>
-    <h1>Create Account</h1>
-    <input class="btn btn-success" type="submit" value="Submit" />
-</form>

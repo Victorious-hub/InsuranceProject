@@ -35,7 +35,11 @@ class ClientRegistrationView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             client_register(form.data)
-            return redirect(self.success_url)  
+            return redirect(self.success_url)
+        else:
+            for _, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
         return render(request, self.template_name, {'form': form})
 
 
@@ -98,6 +102,10 @@ class AuthenticateView(View):
                 elif request.user.role == AGENT:
                     agent_profile_url = reverse(self.agent_success_url, kwargs={'pk': request.user.id})
                     return redirect(agent_profile_url)
+        else:
+            for _, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
         return render(request, self.template_name, {"form": form})
 
 

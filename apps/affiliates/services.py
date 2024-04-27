@@ -6,7 +6,7 @@ def contract_create(pk: int, data) -> Contract:
     # 'client', 'insurance_type', 'insurance_sum', 'start_date', 'end_date'
     agent: Agent = get_object(Agent, user__id=pk)
     obj = Contract.objects.create(
-        client=get_object(Client, user__id=data.get('client')),
+        client=get_object(Client, id=data.get('client')),
         insurance_type=data.get('insurance_type'),
         insurance_sum=data.get('insurance_sum'),
         start_date=data.get('start_date'),

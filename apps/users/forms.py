@@ -10,6 +10,11 @@ class RegistrationForm(forms.ModelForm):
         model = CustomUser
         fields = ('email', 'first_name', 'last_name',)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
 
 class UpdateForm(forms.ModelForm):
     class Meta:
@@ -18,17 +23,19 @@ class UpdateForm(forms.ModelForm):
 
 
 class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Client
-        exclude = ('address', 'phone','user',)
-    
+        exclude = ('address', 'phone', 'user',)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields.update(RegistrationForm().fields)
-    
+        self.order_fields(['email', 'first_name', 'last_name', 'password1', 'password2'])
+
+
     def clean(self):
         self._clean_email(self.cleaned_data.get('email'))
         self._clean_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
@@ -86,6 +93,8 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
                 'gender': user.gender,
                 'age': user.age
             })
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
 
 
 class AgentUpdateForm(forms.ModelForm, ValidationMixin):

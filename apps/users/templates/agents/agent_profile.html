@@ -1,14 +1,43 @@
-<h1>Agent Details</h1>
-<ul>
-    <li>Email: {{ agent.user.email }}</li>
-    <li>First Name: {{ agent.user.first_name }}</li>
-    <li>Last Name: {{ agent.user.last_name }}</li>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+      .box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin-top: 50px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px #ccc;
+      }
+    </style>
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6 box">
+          <h1>Agent Details</h1>
+          <ul>
+              <li>Email: {{ agent.user.email }}</li>
+              <li>First Name: {{ agent.user.first_name }}</li>
+              <li>Last Name: {{ agent.user.last_name }}</li>
 
-    <li>Affiliate name: {{ agent.affiliate.name }}</li>
-    <li>Affiliate address: {{ agent.affiliate.address }}</li>
-    <li>Affiliate phone: {{ agent.affiliate.phone }}</li>
-</ul>
-<a class="btn btn-success" href="{% url 'logout' %}">Logout</a>
-<a class="btn btn-success" href="{% url 'change_password' agent.user.id%}">Change password</a>
-<a class="btn btn-success" href="{% url 'agent_update' agent.user.id%}">Update Data</a>
-<a class="btn btn-success" href="{% url 'contract_create' agent.user.id%}">Create Contract</a>
+              <li>Affiliate name: {{ agent.affiliate.name }}</li>
+              <li>Affiliate address: {{ agent.affiliate.address }}</li>
+              <li>Affiliate phone: {{ agent.affiliate.phone }}</li>
+          </ul>
+          <a class="btn btn-success" href="{% url 'logout' %}">Logout</a>
+          <a class="btn btn-success" href="{% url 'change_password' agent.user.id%}">Change password</a>
+          <a class="btn btn-success" href="{% url 'agent_update' agent.user.id%}">Update Data</a>
+          <a class="btn btn-success" href="{% url 'contract_create' agent.user.id%}">Create Contract</a>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </body>
+</html>

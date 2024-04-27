@@ -12,7 +12,7 @@ class ContractCreateView(LoginRequiredMixin, View):
     template_name = 'contract_create.html'
     model = Contract
     form_class = ContractForm
-    success_url = reverse_lazy('agent_profile')
+    success_url = 'agent_profile'
 
     def get(self, request, pk):
         if not self.request.user.is_authenticated or request.user.role != AGENT:
@@ -25,7 +25,7 @@ class ContractCreateView(LoginRequiredMixin, View):
         if form.is_valid():
             contract = contract_create(pk, form.data)
             if contract:
-                client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
+                client_profile_url = reverse(self.success_url, kwargs={'pk': pk})
                 return redirect(client_profile_url)
         return render(request, self.template_name, {"form": form})
 

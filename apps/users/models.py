@@ -25,7 +25,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255)
     gender = models.CharField(max_length=255, choices=GENDERS, blank=True, null=True)
     last_name = models.CharField(max_length=255)
-    age = models.IntegerField(blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True, default=0)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
