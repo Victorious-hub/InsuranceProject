@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.text import slugify
+from PIL import Image
 
 from .constants import GENDERS, ROLE_CHOICES
 from django.contrib.auth.hashers import make_password
@@ -31,6 +33,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
+    profile_image = models.ImageField(null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -42,7 +45,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def save(self, *args, **kwargs):
         if self.password and not self.password.startswith(('pbkdf2_sha256$', 'bcrypt$', 'argon2')):
             self.password = make_password(self.password)
+
         super().save(*args, **kwargs)
+        if self.profile_image:
+            img = Image.open(self.profile_image.path)
+            if img.height > 300 or img.width > 300:
+                output_size = (300, 300)
+                img.thumbnail(output_size)
+                img.save(self.profile_image.path)
     
 
 class Client(models.Model):
@@ -68,3 +78,18 @@ class Agent(models.Model):
 
     def __str__(self):
         return f"Agent: {self.user.first_name} - {self.user.last_name}"
+
+
+class Feedback(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "feedback"
+        verbose_name_plural = "feedbacks"
+
+    def __str__(self):
+        return f"Contract for client: {self.client.user.first_name}"

@@ -21,13 +21,13 @@ class ClientRegistrationView(View):
     success_url = reverse_lazy('authenticate')
 
     def get(self, request):
-        if self.request.user.is_authenticated:
-            if request.user.role == CLIENT:
-                client_profile_url = reverse("client_profile", kwargs={'pk': request.user.id})
-                return redirect(client_profile_url)
-            elif request.user.role == AGENT:
-                agent_profile_url = reverse("agent_profile", kwargs={'pk': request.user.id})
-                return redirect(agent_profile_url)
+        # if self.request.user.is_authenticated:
+        #     if request.user.role == CLIENT:
+        #         client_profile_url = reverse("client_profile", kwargs={'pk': request.user.id})
+        #         return redirect(client_profile_url)
+        #     elif request.user.role == AGENT:
+        #         agent_profile_url = reverse("agent_profile", kwargs={'pk': request.user.id})
+        #         return redirect(agent_profile_url)
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
 

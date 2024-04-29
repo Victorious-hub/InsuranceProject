@@ -58,6 +58,7 @@ def client_update(pk: int, data) -> Client:
     client.user.first_name = data.get('first_name')
     client.user.last_name = data.get('last_name')
     client.user.age = data.get('age')
+    client.user.profile_image = data.get('profile_image')
 
     client.user.save()
     client.save()

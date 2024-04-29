@@ -19,9 +19,9 @@ class RegistrationForm(forms.ModelForm):
 class UpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('first_name', 'last_name', 'gender', 'age', )
-
-
+        fields = ('first_name', 'last_name', 'gender', 'age','profile_image',)
+    
+ 
 class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))

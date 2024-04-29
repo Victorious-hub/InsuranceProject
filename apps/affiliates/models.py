@@ -25,19 +25,6 @@ class Company(BaseModel):
         return f"Company: {self.name}"
 
 
-class Vacancy(BaseModel):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    salary = models.IntegerField()
-    experience = models.IntegerField()
-
-    class Meta:
-        verbose_name = "vacancy"
-        verbose_name_plural = "vacancies"
-
-    def __str__(self):
-        return f"Vacancy: {self.title}"
-
 class Contract(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
@@ -58,15 +45,4 @@ class Contract(models.Model):
         if self.start_date >= self.end_date:
             raise ValidationError("End date cannot be before start date")
 
-
-class Feedback(BaseModel):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-
-    class Meta:
-        verbose_name = "feedback"
-        verbose_name_plural = "feedbacks"
-
-    def __str__(self):
-        return f"Contract for client: {self.client.user.first_name}"
+    
