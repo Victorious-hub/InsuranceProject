@@ -1,5 +1,6 @@
+import os
 from pathlib import Path
-import environ
+import environ # type: ignore
 
 env = environ.Env()
 environ.Env.read_env()
@@ -25,9 +26,8 @@ LOCAL_APPS = [
 
 # Third party applications
 THIRD_PARTY_APPS = [
-    'daphne',
-    'jazzmin',
     'debug_toolbar',
+    'jazzmin',
 ]
 
 # Installed apps
@@ -47,7 +47,7 @@ if DEBUG:
 
 # middleware
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-#WSGI_APPLICATION = 'config.wsgi.application'
+# WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
 # Database configuration
@@ -110,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -122,7 +122,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Default primary key field type
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
 

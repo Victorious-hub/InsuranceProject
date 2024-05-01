@@ -21,6 +21,9 @@
         <div class="col-md-6 box">
           <h1>Agent Details</h1>
           <ul>
+              {% if agent.user.profile_image %}
+                <img src="{{ agent.user.profile_image.url}}" class="img1" alt="..." />
+              {% endif %}
               <li>Email: {{ agent.user.email }}</li>
               <li>First Name: {{ agent.user.first_name }}</li>
               <li>Last Name: {{ agent.user.last_name }}</li>
@@ -33,6 +36,7 @@
           <a class="btn btn-success" href="{% url 'change_password' agent.user.id%}">Change password</a>
           <a class="btn btn-success" href="{% url 'agent_update' agent.user.id%}">Update Data</a>
           <a class="btn btn-success" href="{% url 'contract_create' agent.user.id%}">Create Contract</a>
+          <a class="btn btn-success" href="{% url 'agent_contracts' agent.user.id%}">Contract list</a>
         </div>
       </div>
     </div>

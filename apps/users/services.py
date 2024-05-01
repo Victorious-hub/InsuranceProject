@@ -1,3 +1,4 @@
+from apps.affiliates.models import Contract
 from .constants import AGENT, CLIENT
 from .utils import get_object
 from .models import Agent, Client, CustomUser
@@ -50,7 +51,7 @@ def agent_get(pk: int) -> Client:
     agent = get_object(Agent, user__id=pk)
     return agent
 
-def client_update(pk: int, data) -> Client:
+def client_update(pk: int, data, profile_image) -> Client:
     client: Client = get_object(Client, user__id=pk)
     client.address = data.get('address')
     client.phone = data.get('phone')
@@ -58,19 +59,26 @@ def client_update(pk: int, data) -> Client:
     client.user.first_name = data.get('first_name')
     client.user.last_name = data.get('last_name')
     client.user.age = data.get('age')
-    client.user.profile_image = data.get('profile_image')
+    client.user.profile_image = profile_image
 
     client.user.save()
     client.save()
     return client
 
-def agent_update(pk: int, data) -> Agent:
+def agent_update(pk: int, data, profile_image) -> Agent:
     agent: Agent = get_object(Agent, user__id=pk)
     agent.user.gender = data.get('gender')
     agent.user.first_name = data.get('first_name')
     agent.user.last_name = data.get('last_name')
     agent.user.age = data.get('age')
-
+    agent.user.profile_image = profile_image
+    
     agent.user.save()
     agent.save()
     return agent
+
+def contract_agent_list(id: int) -> Contract:
+    agent = get_object(Agent, user__id=id)
+
+    obj = Contract.objects.filter(agent=agent)
+    return obj

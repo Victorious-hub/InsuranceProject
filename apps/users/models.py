@@ -33,7 +33,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
-    profile_image = models.ImageField(null=True, blank=True)
+    profile_image = models.ImageField(null=True, blank=True, upload_to="images/")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

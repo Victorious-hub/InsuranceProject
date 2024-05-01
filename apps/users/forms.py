@@ -19,7 +19,7 @@ class RegistrationForm(forms.ModelForm):
 class UpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('first_name', 'last_name', 'gender', 'age','profile_image',)
+        fields = ('first_name', 'last_name', 'gender', 'age', 'profile_image',)
     
  
 class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
@@ -88,6 +88,7 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
         self.fields.update(UpdateForm().fields)
         if user:
             self.initial.update({
+                'profile_image': user.profile_image,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'gender': user.gender,
@@ -108,6 +109,7 @@ class AgentUpdateForm(forms.ModelForm, ValidationMixin):
         self.fields.update(UpdateForm().fields)
         if user:
             self.initial.update({
+                'profile_image': user.profile_image,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'gender': user.gender,

@@ -1,3 +1,5 @@
+import asyncio
+
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -8,7 +10,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .constants import AGENT, CLIENT
-from .services import agent_get, agent_update, client_get, client_register, client_update
+from .services import agent_get, agent_update, client_get, client_register, client_update, contract_agent_list
 
 from .models import Agent, Client, CustomUser
 from .forms import AgentUpdateForm, ClientRegistrationForm, ClientUpdateForm, LoginForm
@@ -21,13 +23,6 @@ class ClientRegistrationView(View):
     success_url = reverse_lazy('authenticate')
 
     def get(self, request):
-        # if self.request.user.is_authenticated:
-        #     if request.user.role == CLIENT:
-        #         client_profile_url = reverse("client_profile", kwargs={'pk': request.user.id})
-        #         return redirect(client_profile_url)
-        #     elif request.user.role == AGENT:
-        #         agent_profile_url = reverse("agent_profile", kwargs={'pk': request.user.id})
-        #         return redirect(agent_profile_url)
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
 
@@ -179,7 +174,7 @@ class UpdateClientProfileView(LoginRequiredMixin, View):
     def post(self, request, pk):
         form = self.form_class(request.POST)
         if form.is_valid():
-            client = client_update(pk, form.data)
+            client = client_update(pk, form.data,  request.FILES.get('profile_image'))
             if client:
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
@@ -193,7 +188,7 @@ class UpdateAgentProfileView(LoginRequiredMixin, View):
     success_url = "agent_profile"
 
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != CLIENT:
+        if not self.request.user.is_authenticated or request.user.role != AGENT:
             return redirect("authenticate")
         client = client_get(pk)  
         form = self.form_class(instance=client, user=request.user)
@@ -202,8 +197,20 @@ class UpdateAgentProfileView(LoginRequiredMixin, View):
     def post(self, request, pk):
         form = self.form_class(request.POST)
         if form.is_valid():
-            client = agent_update(pk, form.data)
-            if client:
-                client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
-                return redirect(client_profile_url)
+            agent = agent_update(pk, form.data, request.FILES.get('profile_image'))
+            if agent:
+                agent_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
+                return redirect(agent_profile_url)
         return render(request, self.template_name, {"form": form})
+
+class ContractAgentListView(View, LoginRequiredMixin):
+    model = Agent
+    template_name = "agents/agent_contracts.html"
+    success_url = "agent_profile"
+
+    def get(self, request, pk):
+        if not self.request.user.is_authenticated or request.user.role != AGENT:
+            return redirect("authenticate")
+        contracts = contract_agent_list(pk)  
+        return render(request, self.template_name, context={"contracts": contracts})
+    

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Form</title>
+</head>
+<body>
+    <h1>Vacancy list</h1>
+    <ul>
+        {% for item in contracts %}
+            <p class="truncate">Client: {{ item.client }}</p>
+            <p class="truncate">Affiliate: {{ item.affiliate }}</p>
+            <p class="truncate">Insurance type: {{ item.insurance_type }}</p>
+            <p class="truncate">Insurance sum: {{ item.insurance_sum }}</p>
+            <p class="truncate">Start date: {{ item.start_date }}</p>
+            <p class="truncate">End_date: {{ item.end_date }}</p>
+            <hr>
+        {% endfor %}
+    </ul>
+</body>
+</html>

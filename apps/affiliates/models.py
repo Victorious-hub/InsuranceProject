@@ -1,21 +1,10 @@
 from django.db import models
 from django.forms import ValidationError
-from django.utils import timezone
 from .constants import INSURANCE_TYPE
 from apps.users.models import Agent, Client, Affiliate
 
-class BaseModel(models.Model):
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-
-class Company(BaseModel):
-    name = models.CharField(max_length=255)
-    country = models.CharField(max_length=255)
-    affiliates = models.ManyToManyField(Affiliate)
+class Company(models.Model):
+    information = models.TextField()
 
     class Meta:
         verbose_name = "company"
@@ -23,6 +12,49 @@ class Company(BaseModel):
 
     def __str__(self):
         return f"Company: {self.name}"
+
+
+class Contacts(models.Model):
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
+    description =  models.TextField()
+
+    class Meta:
+        verbose_name = "company"
+        verbose_name_plural = "Companies"
+
+    def __str__(self):
+        return f"Company: {self.name}"
+
+class Question(models.Model):
+    text = models.TextField()
+
+    class Meta:
+        verbose_name = "question"
+        verbose_name_plural = "questions"
+
+    def __str__(self):
+        return f"Question: {self.text}"
+
+class Answer(models.Model):
+    text = models.TextField()
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "answer"
+        verbose_name_plural = "answeries"
+
+    def __str__(self):
+        return f"Answer: {self.text}"
+
+class PrivacyPolicy(models.Model):
+    text = models.TextField()
+
+    class Meta:
+        verbose_name = "privacyPolicy"
+        verbose_name_plural = "privacyPolicies"
+
+    def __str__(self):
+        return f"privacyPolicy"
 
 
 class Contract(models.Model):

@@ -5,7 +5,8 @@ from .views import (
     AuthenticateView, 
     ChangePasswordView, 
     ClientProfileView, 
-    ClientRegistrationView, 
+    ClientRegistrationView,
+    ContractAgentListView, 
     LogoutView,
     UpdateAgentProfileView, 
     UpdateClientProfileView,
@@ -21,4 +22,5 @@ urlpatterns = [
     path('password/change/<int:pk>', ChangePasswordView.as_view(), name='change_password'),
     path('client/update/<int:pk>', UpdateClientProfileView.as_view(), name='client_update'),
     path('agent/update/<int:pk>', UpdateAgentProfileView.as_view(), name='agent_update'),
+    path('agent/contracts/<int:pk>', ContractAgentListView.as_view(), name='agent_contracts')
 ] 
