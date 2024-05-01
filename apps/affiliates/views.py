@@ -8,6 +8,9 @@ from .forms import ContractForm
 from .models import Contract
 
 
+class BaseView(View):
+    template_name = 'base.html'
+
 class ContractCreateView(LoginRequiredMixin, View):
     template_name = 'contract_create.html'
     model = Contract

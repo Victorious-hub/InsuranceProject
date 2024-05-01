@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
+from django.views import View
+from .services import feedback_list, vacancy_list
 
-from .services import vacancy_list
 
-class MainView(TemplateView):
-    template_name = 'main/main.html'
+class BaseView(TemplateView):
+    template_name = 'main/base.html'
 
 
 class VacnacyListView(TemplateView):
@@ -12,5 +13,13 @@ class VacnacyListView(TemplateView):
 
     def get(self, request):
         vacancies = vacancy_list()
-        print(vacancies)
         return render(request, self.template_name, context={"vacancies": vacancies})
+
+
+class FeedbackListView(View):
+    template_name = 'main/feedback.html'
+
+    def get(self, request):
+        feedbacks = feedback_list()
+        print(feedbacks.values())
+        return render(request, self.template_name, context={"feedbacks": feedbacks})

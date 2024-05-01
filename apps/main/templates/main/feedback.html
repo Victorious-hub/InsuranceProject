@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Form</title>
+</head>
+<body>
+    <h1>feedbacks list</h1>
+    <ul>
+        {% for item in feedbacks %}
+            <p class="truncate">Client: {{ item.client.user }}</p>
+            <p class="truncate">Title: {{ item.title }}</p>
+            <p class="truncate">Description: {{ item.description }}</p>
+            <p class="truncate">Rating: {{ item.rating }}</p>
+            <p class="truncate">Created at: {{ item.created_at }}</p>
+            <hr>
+        {% endfor %}
+    </ul>
+</body>
+</html>

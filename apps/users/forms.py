@@ -2,7 +2,7 @@
 from django import forms
 
 from .mixins import ValidationMixin
-from .models import Agent, Client, CustomUser
+from .models import Agent, Client, CustomUser, Feedback
 
 
 class RegistrationForm(forms.ModelForm):
@@ -115,3 +115,13 @@ class AgentUpdateForm(forms.ModelForm, ValidationMixin):
                 'gender': user.gender,
                 'age': user.age
             })
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        exclude = ('client',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'

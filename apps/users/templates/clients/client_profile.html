@@ -39,6 +39,7 @@
           <a class="btn btn-success" href="{% url 'logout' %}">Logout</a>
           <a class="btn btn-success" href="{% url 'change_password' client.user.id%}">Change password</a>
           <a class="btn btn-success" href="{% url 'client_update' client.user.id%}">Update Data</a>
+          <a class="btn btn-success" href="{% url 'feedback_create' client.user.id%}">Feedback Create</a>
         </div>
       </div>
     </div>

@@ -1,5 +1,3 @@
-import asyncio
-
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -7,20 +5,22 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+
+from .utils import get_client_group
 
 from .constants import AGENT, CLIENT
-from .services import agent_get, agent_update, client_get, client_register, client_update, contract_agent_list
+from .services import agent_get, agent_update, client_get, client_register, client_update, contract_agent_list, feedback_create
 
-from .models import Agent, Client, CustomUser
-from .forms import AgentUpdateForm, ClientRegistrationForm, ClientUpdateForm, LoginForm
+from .models import Agent, Client, CustomUser, Feedback
+from .forms import AgentUpdateForm, ClientRegistrationForm, ClientUpdateForm, FeedbackForm, LoginForm
 
 
 class ClientRegistrationView(View):
     template_name = 'auth/client_register.html'
     model = Client
     form_class = ClientRegistrationForm
-    success_url = reverse_lazy('authenticate')
+    success_url = reverse_lazy('login')
 
     def get(self, request):
         form = self.form_class()
@@ -105,12 +105,14 @@ class AuthenticateView(View):
 
 
 class ClientProfileView(View, LoginRequiredMixin):
-    template_name = "clients/client_profile.html"
-    success_url = reverse_lazy("main")
+    # permission_required = 'users.change_client'
+    template_name = 'clients/client_profile.html'
+    success_url = reverse_lazy('main')
+
     
     def get(self, request, pk):
         if not self.request.user.is_authenticated or request.user.role != CLIENT:
-            return redirect("authenticate")
+            return redirect("login")
         client = client_get(pk)
         return render(request, self.template_name, context={"client": client})
 
@@ -120,13 +122,13 @@ class AgentProfileView(View, LoginRequiredMixin):
     
     def get(self, request, pk):
         if not self.request.user.is_authenticated or request.user.role != AGENT:
-            return redirect("authenticate")
+            return redirect("login")
         agent = agent_get(pk)
         return render(request, self.template_name, context={"agent": agent})
 
 
 class LogoutView(View):
-    success_url = reverse_lazy('authenticate')
+    success_url = reverse_lazy('login')
 
     def get(self, request):
         logout(request)
@@ -213,4 +215,25 @@ class ContractAgentListView(View, LoginRequiredMixin):
             return redirect("authenticate")
         contracts = contract_agent_list(pk)  
         return render(request, self.template_name, context={"contracts": contracts})
+
+
+class FeedbackCreateView(View, LoginRequiredMixin):
+    model = Feedback
+    form_class = FeedbackForm
+    template_name = "clients/feedback_create.html"
+    success_url = "client_profile"
+
+    def get(self, request, pk):
+        if not self.request.user.is_authenticated or request.user.role != CLIENT:
+            return redirect("login")
+        form = self.form_class()
+        return render(request, self.template_name, context={"form": form})
     
+    def post(self, request, pk):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            feedback = feedback_create(pk, form.data)
+            if feedback:
+                client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
+                return redirect(client_profile_url)
+        return render(request, self.template_name, {"form": form})

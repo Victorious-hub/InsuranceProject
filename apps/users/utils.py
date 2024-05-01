@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Group
 
 
 def get_object(model_or_queryset, **kwargs):
@@ -11,3 +12,7 @@ def get_object(model_or_queryset, **kwargs):
         return get_object_or_404(model_or_queryset, **kwargs)
     except Http404:
         return None
+
+def get_client_group() -> Group:
+    group = Group.objects.get(name='Client')
+    return group

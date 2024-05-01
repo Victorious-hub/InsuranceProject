@@ -1,10 +1,10 @@
-from django.conf import settings
+from django.core.validators import MinValueValidator, RegexValidator, MaxValueValidator
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.text import slugify
 from PIL import Image
-
+from django.utils.translation import gettext_lazy as _
 from .constants import GENDERS, ROLE_CHOICES
 from django.contrib.auth.hashers import make_password
 from .managers import UserManager
@@ -22,12 +22,30 @@ class Affiliate(models.Model):
         return f"Affiliate: {self.name}"
 
 
+# CLIENT = 1
+# AGENT = 2
+
+# ROLE_CHOICES = (
+#     (CLIENT, 'Client'),
+#     (AGENT, 'Agent'),
+# )
+
+
+# GENDERS = (
+#     ('Male', _('Male')),
+#     ('Female', _('Female')),
+# )
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    # class RoleType(models.TextChoices):
+    #     PATIENT = (CLIENT, 'Client'),
+    #     DOCTOR = (AGENT, 'Agent'),
+
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     gender = models.CharField(max_length=255, choices=GENDERS, blank=True, null=True)
     last_name = models.CharField(max_length=255)
-    age = models.PositiveIntegerField(blank=True, null=True, default=0)
+    age = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(18), MaxValueValidator(120)])
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
@@ -58,7 +76,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, blank=True)
-    phone = models.CharField(max_length=255, blank=True)
+    phone = models.CharField(max_length=255, blank=True, validators=[RegexValidator(r"\+375 \((29|33|25)\) \d{3}-\d{2}-\d{2}")])
 
     class Meta:
         verbose_name = "client"
@@ -86,6 +104,9 @@ class Feedback(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
+
+
 
     class Meta:
         verbose_name = "feedback"

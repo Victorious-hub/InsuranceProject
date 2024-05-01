@@ -40,7 +40,7 @@
             </div>
         {% endif %}
 
-        <form method="POST" action="{% url 'authenticate' %}">
+        <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             <h1>Sign In</h1>
             {% for field in form %}
