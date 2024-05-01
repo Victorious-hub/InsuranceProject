@@ -21,5 +21,4 @@ class FeedbackListView(View):
 
     def get(self, request):
         feedbacks = feedback_list()
-        print(feedbacks.values())
         return render(request, self.template_name, context={"feedbacks": feedbacks})

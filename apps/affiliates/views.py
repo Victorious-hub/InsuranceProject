@@ -1,25 +1,21 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views import View
-from apps.users.constants import AGENT
+from apps.users.constants import CLIENT
 from apps.affiliates.services import contract_create
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ContractForm
 from .models import Contract
 
-
-class BaseView(View):
-    template_name = 'base.html'
-
 class ContractCreateView(LoginRequiredMixin, View):
     template_name = 'contract_create.html'
     model = Contract
     form_class = ContractForm
-    success_url = 'agent_profile'
+    success_url = 'client_profile'
 
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != AGENT:
-            return redirect("authenticate")
+        if not self.request.user.is_authenticated or request.user.role != CLIENT:
+            return redirect("login")
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
 

@@ -6,11 +6,7 @@ from .models import Contract
 class ContractForm(forms.ModelForm):
     class Meta:
         model = Contract
-        fields = ('client', 'insurance_type', 'insurance_sum', 'start_date', 'end_date',)
-        widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
-        }
+        fields = ('insurance_type', 'affiliate', )
     
     def __init__(self, *args, **kwargs):
         super(ContractForm, self).__init__(*args, **kwargs)
