@@ -77,6 +77,7 @@ class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=255, blank=True, validators=[RegexValidator(r"\+375 \((29|33|25)\) \d{3}-\d{2}-\d{2}")])
+    balance = models.FloatField(default=0)
 
     class Meta:
         verbose_name = "client"

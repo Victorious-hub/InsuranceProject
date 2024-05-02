@@ -21,7 +21,6 @@ ALLOWED_HOSTS = []
 LOCAL_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.affiliates.apps.AffiliatesConfig',
-    'apps.main.apps.MainConfig',
 ]
 
 # Third party applications
@@ -89,6 +88,14 @@ DATABASES = {
         'PASSWORD': 'strong-password'
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 2525
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'shyskov@inbox.ru'
+EMAIL_HOST_PASSWORD = 'PuNdNfkJHxMGf6qmswds'
 
 
 # Password validation

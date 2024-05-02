@@ -89,7 +89,6 @@ def contract_agent_list(id: int) -> Contract:
 
 def feedback_create(pk: int, data) -> Feedback:
     client = get_object(Client, user__id=pk)
-    print(client)
     obj = Feedback.objects.create(
         client=client,
         title=data.get('title'),
@@ -99,3 +98,11 @@ def feedback_create(pk: int, data) -> Feedback:
     obj.full_clean()
     obj.save()
     return obj
+
+def balance_update(pk: int, data) -> Client:
+    client: Client = get_object(Client, user__id=pk)
+    client.balance += int(data.get('balance'))
+
+    client.save()
+    return client
+

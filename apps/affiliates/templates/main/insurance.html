@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Form</title>
+</head>
+<body>
+    <h1>Insurance type list</h1>
+    <ul>
+        {% for item in insurance %}
+            <p class="truncate">Type: {{ item.type }}</p>
+            <p class="truncate">Insurance sum: {{ item.insurance_sum }}</p>
+            <p class="truncate">Risks list: {{ item.risks }}</p>
+            <hr>
+        {% endfor %}
+    </ul>
+</body>
+</html>

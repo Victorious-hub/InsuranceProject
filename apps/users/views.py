@@ -10,10 +10,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from .utils import get_client_group
 
 from .constants import AGENT, CLIENT
-from .services import agent_get, agent_update, client_get, client_register, client_update, contract_agent_list, feedback_create
+from .services import agent_get, agent_update, balance_update, client_get, client_register, client_update, contract_agent_list, feedback_create
 
 from .models import Agent, Client, CustomUser, Feedback
-from .forms import AgentUpdateForm, ClientRegistrationForm, ClientUpdateForm, FeedbackForm, LoginForm
+from .forms import AgentUpdateForm, BalanceForm, ClientRegistrationForm, ClientUpdateForm, FeedbackForm, LoginForm
 
 
 class ClientRegistrationView(View):
@@ -234,6 +234,28 @@ class FeedbackCreateView(View, LoginRequiredMixin):
         if form.is_valid():
             feedback = feedback_create(pk, form.data)
             if feedback:
+                client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
+                return redirect(client_profile_url)
+        return render(request, self.template_name, {"form": form})
+    
+
+class FillBalanceView(View, LoginRequiredMixin):
+    model = Client
+    form_class = BalanceForm
+    template_name = "clients/balance_create.html"
+    success_url = "client_profile"
+
+    def get(self, request, pk):
+        if not self.request.user.is_authenticated or request.user.role != CLIENT:
+            return redirect("login")
+        form = self.form_class()
+        return render(request, self.template_name, context={"form": form})
+    
+    def post(self, request, pk):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            balance = balance_update(pk, form.data)
+            if balance:
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
         return render(request, self.template_name, {"form": form})

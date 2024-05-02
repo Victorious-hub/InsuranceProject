@@ -28,7 +28,7 @@ class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
 
     class Meta:
         model = Client
-        exclude = ('address', 'phone', 'user',)
+        exclude = ('address', 'phone', 'user', 'balance',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -120,6 +120,16 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         exclude = ('client',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
+class BalanceForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ('balance',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
