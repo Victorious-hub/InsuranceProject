@@ -12,7 +12,3 @@ def get_object(model_or_queryset, **kwargs):
         return get_object_or_404(model_or_queryset, **kwargs)
     except Http404:
         return None
-
-def get_client_group() -> Group:
-    group = Group.objects.get(name='Client')
-    return group

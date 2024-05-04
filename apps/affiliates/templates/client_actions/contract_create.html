@@ -1,4 +1,4 @@
-{% load static %}
+{%load static%}
 <!doctype html>
 <html lang="en">
   <head>
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static "client/css/client_common.css" %}">
     <title>Hello, world!</title>
   </head>
+  
   <body>
     <div class="d-flex justify-content-center align-items-center full-height">
       <div class="form-box">
@@ -20,16 +21,15 @@
                 {% endfor %}
             </div>
         {% endif %}
-
-        <form method="POST" action="{% url 'login' %}">
+        <form method="POST" action="{% url 'contract_create' user.id%}">
             {% csrf_token %}
-            <h1>Sign In</h1>
+            <h1>Create Contract</h1>
             {% for field in form %}
                 <div class="form-group">
                     {{ field.label_tag }}
                     {{ field }}
                     {% if field.errors %}
-                        <div class="invalid-data d-inline-block ml-2">
+                        <div class="invalid-feedback d-inline-block ml-2">
                             {{ field.errors|first }}
                         </div>
                     {% endif %}
@@ -37,9 +37,6 @@
             {% endfor %}
             <input class="btn btn-success" type="submit" value="Submit" />
         </form>
-        <div class="mt-3">
-          <p>Don't have an account? <a href="{% url 'client_register' %}">Register</a></p>
-      </div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

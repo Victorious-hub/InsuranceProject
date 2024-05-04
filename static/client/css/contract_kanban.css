@@ -1,0 +1,14 @@
+.kanban {
+    display: flex;
+    justify-content: space-between;
+}
+
+.kanban-column {
+    flex: 1;
+    border-right: 1px solid #ccc;
+    padding: 20px;
+}
+
+.kanban-column:last-child {
+    border-right: none;
+}

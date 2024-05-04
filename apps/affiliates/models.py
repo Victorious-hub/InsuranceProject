@@ -3,6 +3,8 @@ from apps.users.models import Agent, Client, Affiliate
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
+from .constants import CONTRACTS, INSURANCE
+
 class BaseModel(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -19,7 +21,7 @@ class Company(models.Model):
         verbose_name_plural = "Companies"
 
     def __str__(self):
-        return f"Company: {self.name}"
+        return f"Company: {self.information[:10]}"
 
 
 class Contacts(models.Model):
@@ -31,7 +33,7 @@ class Contacts(models.Model):
         verbose_name_plural = "Companies"
 
     def __str__(self):
-        return f"Company: {self.name}"
+        return f"Company: {self.description[:10]}"
 
 class Question(models.Model):
     text = models.TextField()
@@ -66,10 +68,7 @@ class PrivacyPolicy(models.Model):
 
 
 class InsuranceType(models.Model):
-    class Insurance(models.TextChoices):
-        MEDICAL = 'Medical', _('Medical Insuracne')
-        HOUSE = 'House', _('House Insuracne')
-    type = models.CharField(max_length=20, choices=Insurance.choices)
+    type = models.PositiveSmallIntegerField(max_length=20, choices=INSURANCE)
     description = models.TextField()
 
     class Meta:
@@ -108,19 +107,14 @@ class InsuranceRisk(models.Model):
 
 
 class Contract(models.Model):
-    class CompleteType(models.TextChoices):
-        PAYED = 1, _('Payed')
-        COMPLETED = 2, _('Completed')
-        NOT_PAYED = 3, _('Not payed')
-    
-
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     affiliate = models.ForeignKey(Affiliate, on_delete=models.CASCADE)
     insurance_type = models.ForeignKey(InsuranceType, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     insurance_object = models.ForeignKey(InsuranceObject, on_delete=models.CASCADE)
     insurance_risk = models.ManyToManyField(InsuranceRisk)
-    is_completed = models.CharField(max_length=20, choices=CompleteType.choices, default=CompleteType.NOT_PAYED)
+    is_completed = models.PositiveSmallIntegerField(max_length=20, choices=CONTRACTS)
+
 
     class Meta:
         verbose_name = "contract"
@@ -130,11 +124,11 @@ class Contract(models.Model):
         return f"Contract for client: {self.client.user.first_name}"
 
 
-class Pollis(models.Model):
+class Policy(models.Model):
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     insurance_sum = models.FloatField(default=0)
-    start_date = models.DateField(auto_now_add=True)
+    start_date = models.DateField()
     end_date = models.DateField()
 
     def clean(self):

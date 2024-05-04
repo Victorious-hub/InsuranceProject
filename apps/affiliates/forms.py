@@ -1,6 +1,6 @@
 
 from django import forms
-from .models import Contract, InsuranceRisk, Pollis
+from .models import Contract, InsuranceRisk, Policy
 
 class ContractForm(forms.ModelForm):
     insurance_risk = forms.ModelMultipleChoiceField(queryset=InsuranceRisk.objects.all())
@@ -15,12 +15,24 @@ class ContractForm(forms.ModelForm):
                 field.widget.attrs['class'] = 'form-control'
 
 
-class PollisForm(forms.ModelForm):
+class PolicyForm(forms.ModelForm):
     class Meta:
-        model = Pollis
+        model = Policy
         exclude = ('agent',)
     
     def __init__(self, *args, **kwargs):
-        super(PollisForm, self).__init__(*args, **kwargs)
+        super(PolicyForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
-                field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['class'] = 'form-control'
+        self.fields['start_date'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'class': 'form-control'
+                }
+            )
+        self.fields['end_date'].widget = forms.widgets.DateInput(
+            attrs={
+                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
+                'class': 'form-control'
+                }
+            )

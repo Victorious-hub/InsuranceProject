@@ -13,4 +13,3 @@ GENDERS = (
     ('Male', _('Male')),
     ('Female', _('Female')),
 )
-

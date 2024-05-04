@@ -5,16 +5,32 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .utils import get_client_group
+from .constants import CLIENT, AGENT
 
-from .constants import AGENT, CLIENT
-from .services import agent_get, agent_update, balance_update, client_get, client_register, client_update, contract_agent_list, feedback_create
-
+from .decorators import agent_required, client_required
+from django.utils.decorators import method_decorator
 from .models import Agent, Client, CustomUser, Feedback
-from .forms import AgentUpdateForm, BalanceForm, ClientRegistrationForm, ClientUpdateForm, FeedbackForm, LoginForm
 
+from .forms import (
+    AgentUpdateForm, 
+    BalanceForm, 
+    ClientRegistrationForm, 
+    ClientUpdateForm, 
+    FeedbackForm, 
+    LoginForm
+)
+
+from .services import (
+    agent_update, 
+    balance_update, 
+    client_register, 
+    client_update, 
+    feedback_create
+)
+
+from .selectors import agent_get, contract_agent_list, client_get
 
 class ClientRegistrationView(View):
     template_name = 'auth/client_register.html'
@@ -64,67 +80,52 @@ class ClientRegistrationView(View):
 
 
 class AuthenticateView(View):
-    template_name = "auth/authenticate.html"
+    template_name = 'auth/authenticate.html'
     form_class = LoginForm
-    client_success_url = "client_profile"
-    agent_success_url = "agent_profile"
+    success_url = 'main'
 
     def get(self, request):
         if self.request.user.is_authenticated:
-            if request.user.role == CLIENT:
-                client_profile_url = reverse("client_profile", kwargs={'pk': request.user.id})
-                return redirect(client_profile_url)
-            elif request.user.role == AGENT:
-                agent_profile_url = reverse("agent_profile", kwargs={'pk': request.user.id})
-                return redirect(agent_profile_url)
+            return redirect(self.success_url)
         form = self.form_class()
-        return render(request, self.template_name, context={"form": form})
+        return render(request, self.template_name, context={'form': form})
 
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = authenticate(
                 request,
-                email=form.cleaned_data["email"],
-                password=form.cleaned_data["password"]
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password']
             )
 
             if user:
                 login(request, user)
-                if request.user.role == CLIENT:
-                    client_profile_url = reverse(self.client_success_url, kwargs={'pk': request.user.id})
-                    return redirect(client_profile_url)
-                elif request.user.role == AGENT:
-                    agent_profile_url = reverse(self.agent_success_url, kwargs={'pk': request.user.id})
-                    return redirect(agent_profile_url)
+                return redirect(self.success_url)
         else:
             for _, errors in form.errors.items():
                 for error in errors:
-                    messages.error(request, f"{error}")
-        return render(request, self.template_name, {"form": form})
+                    messages.error(request, f'{error}')
+        return render(request, self.template_name, {'form': form})
 
 
-class ClientProfileView(View, LoginRequiredMixin):
+@method_decorator(client_required, name='dispatch')
+class ClientProfileView(View):
     # permission_required = 'users.change_client'
     template_name = 'clients/client_profile.html'
-    success_url = reverse_lazy('main')
-
     
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != CLIENT:
-            return redirect("login")
         client = client_get(pk)
-        return render(request, self.template_name, context={"client": client})
+        return render(request, self.template_name, context={'client': client})
+    
 
-
-class AgentProfileView(View, LoginRequiredMixin):
-    template_name = "agents/agent_profile.html"
+@method_decorator(agent_required, name='dispatch')
+class AgentProfileView(View):
+    template_name = 'agents/agent_profile.html'
     
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != AGENT:
-            return redirect("login")
         agent = agent_get(pk)
-        return render(request, self.template_name, context={"agent": agent})
+        return render(request, self.template_name, context={'agent': agent})
 
 
 class LogoutView(View):
@@ -135,15 +136,15 @@ class LogoutView(View):
         return redirect(self.success_url)
     
 
-class ChangePasswordView(LoginRequiredMixin, View):
+class ChangePasswordView(View):
     model = CustomUser
-    template_name = "auth/change_password.html"
+    template_name = 'auth/change_password.html'
     form_class = PasswordChangeForm
-    success_url = reverse_lazy("authenticate")
+    success_url = reverse_lazy('login')
 
     def get(self, request, pk):
         if not self.request.user.is_authenticated:
-            return redirect("authenticate")
+            return redirect(self.success_url)
         form = self.form_class(request.user)
         return render(request, self.template_name, context={'form': form})
     
@@ -153,25 +154,24 @@ class ChangePasswordView(LoginRequiredMixin, View):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, "Your password was successfully updated!")
+            messages.success(request, 'Your password was successfully updated!')
             return redirect(self.success_url)
         else:
-            messages.error(request, "Please correct the error below.")
-        return render(request, self.template_name, {"form": form})
+            messages.error(request, 'Please correct the error below.')
+        return render(request, self.template_name, {'form': form})
 
 
-class UpdateClientProfileView(LoginRequiredMixin, View):
+@method_decorator(client_required, name='dispatch')
+class UpdateClientProfileView(View):
     model = Client
     form_class = ClientUpdateForm
-    template_name = "clients/client_data.html"
-    success_url = "client_profile"
+    template_name = 'clients/client_data.html'
+    success_url = 'client_profile'
 
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != CLIENT:
-            return redirect("authenticate")
         client = client_get(pk)  
         form = self.form_class(instance=client, user=request.user)
-        return render(request, self.template_name, context={"form": form})
+        return render(request, self.template_name, context={'form': form})
 
     def post(self, request, pk):
         form = self.form_class(request.POST)
@@ -180,21 +180,20 @@ class UpdateClientProfileView(LoginRequiredMixin, View):
             if client:
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
-        return render(request, self.template_name, {"form": form})
+        return render(request, self.template_name, {'form': form})
 
 
-class UpdateAgentProfileView(LoginRequiredMixin, View):
+@method_decorator(agent_required, name='dispatch')
+class UpdateAgentProfileView(View):
     model = Agent
     form_class = AgentUpdateForm
-    template_name = "agents/agent_data.html"
-    success_url = "agent_profile"
+    template_name = 'agents/agent_data.html'
+    success_url = 'agent_profile'
 
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != AGENT:
-            return redirect("authenticate")
         client = client_get(pk)  
         form = self.form_class(instance=client, user=request.user)
-        return render(request, self.template_name, context={"form": form})
+        return render(request, self.template_name, context={'form': form})
 
     def post(self, request, pk):
         form = self.form_class(request.POST)
@@ -203,31 +202,30 @@ class UpdateAgentProfileView(LoginRequiredMixin, View):
             if agent:
                 agent_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(agent_profile_url)
-        return render(request, self.template_name, {"form": form})
+        return render(request, self.template_name, {'form': form})
 
-class ContractAgentListView(View, LoginRequiredMixin):
+
+@method_decorator(agent_required, name='dispatch')
+class ContractAgentListView(View):
     model = Agent
-    template_name = "agents/agent_contracts.html"
-    success_url = "agent_profile"
+    template_name = 'agents/agent_contracts.html'
+    success_url = 'agent_profile'
 
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != AGENT:
-            return redirect("authenticate")
         contracts = contract_agent_list(pk)  
-        return render(request, self.template_name, context={"contracts": contracts})
+        return render(request, self.template_name, context={'contracts': contracts})
 
 
-class FeedbackCreateView(View, LoginRequiredMixin):
+@method_decorator(client_required, name='dispatch')
+class FeedbackCreateView(View):
     model = Feedback
     form_class = FeedbackForm
-    template_name = "clients/feedback_create.html"
-    success_url = "client_profile"
+    template_name = 'clients/feedback_create.html'
+    success_url = 'client_profile'
 
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != CLIENT:
-            return redirect("login")
         form = self.form_class()
-        return render(request, self.template_name, context={"form": form})
+        return render(request, self.template_name, context={'form': form})
     
     def post(self, request, pk):
         form = self.form_class(request.POST)
@@ -236,20 +234,19 @@ class FeedbackCreateView(View, LoginRequiredMixin):
             if feedback:
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
-        return render(request, self.template_name, {"form": form})
+        return render(request, self.template_name, {'form': form})
     
 
-class FillBalanceView(View, LoginRequiredMixin):
+@method_decorator(client_required, name='dispatch')
+class FillBalanceView(View):
     model = Client
     form_class = BalanceForm
-    template_name = "clients/balance_create.html"
-    success_url = "client_profile"
+    template_name = 'clients/balance_create.html'
+    success_url = 'client_profile'
 
     def get(self, request, pk):
-        if not self.request.user.is_authenticated or request.user.role != CLIENT:
-            return redirect("login")
         form = self.form_class()
-        return render(request, self.template_name, context={"form": form})
+        return render(request, self.template_name, context={'form': form})
     
     def post(self, request, pk):
         form = self.form_class(request.POST)
@@ -258,4 +255,4 @@ class FillBalanceView(View, LoginRequiredMixin):
             if balance:
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
-        return render(request, self.template_name, {"form": form})
+        return render(request, self.template_name, {'form': form})

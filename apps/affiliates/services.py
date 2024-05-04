@@ -1,6 +1,13 @@
-from apps.users.models import Affiliate, Agent, Client, Feedback
+from apps.users.models import Affiliate, Agent, Client
 from apps.users.utils import get_object
-from .models import Contract, InsuranceObject, InsuranceRisk, InsuranceType, Pollis, Vacancy
+from .constants import CONFIRMED, CREATED
+from .models import (
+    Contract, 
+    InsuranceObject, 
+    InsuranceRisk, 
+    InsuranceType, 
+    Policy
+)
 
 def contract_create(pk: int, data) -> Contract:
     affiliate = get_object(Affiliate, id=data.get('affiliate'))
@@ -10,7 +17,8 @@ def contract_create(pk: int, data) -> Contract:
         client=get_object(Client, user__id=pk),
         insurance_type=insurance_type,
         insurance_object=insurance_object,
-        affiliate=affiliate
+        affiliate=affiliate,
+        is_completed=CREATED
     )
 
     for insurance_risks in data.get('insurance_risk'):
@@ -23,11 +31,12 @@ def contract_create(pk: int, data) -> Contract:
     return obj
 
 
-def pollis_create(pk: int, data) -> Pollis:
+def policy_create(pk: int, data) -> Policy:
     agent: Agent = get_object(Agent, user__id=pk)
     contract: Contract = get_object(Contract, id=data.get('contract'))
-    contract.is_completed = Contract.CompleteType.COMPLETED
-    obj = Pollis.objects.create(
+    contract.is_completed = CONFIRMED
+    contract.save()
+    obj = Policy.objects.create(
         agent=agent,
         contract=contract,
         insurance_sum=data.get('insurance_sum'),
@@ -37,16 +46,4 @@ def pollis_create(pk: int, data) -> Pollis:
 
     obj.full_clean()
     obj.save()
-    return obj
-
-def vacancy_list() -> Vacancy:
-    obj = Vacancy.objects.all().values('title', 'description', 'created_at')
-    return obj
-
-def feedback_list() -> Vacancy:
-    obj = Feedback.objects.all()
-    return obj
-
-def incurance_list() -> InsuranceType:
-    obj = InsuranceType.objects.all()
     return obj

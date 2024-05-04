@@ -2,7 +2,6 @@
 
 from django.forms import ValidationError
 
-from .utils import get_object
 from .models import CustomUser
 
 
