@@ -28,7 +28,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=255, choices=GENDERS, blank=True, null=True)
     last_name = models.CharField(max_length=255)
     age = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(18), MaxValueValidator(120)])
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -85,7 +85,7 @@ class Feedback(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
 

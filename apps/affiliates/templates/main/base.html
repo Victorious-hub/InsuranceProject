@@ -40,76 +40,36 @@
                         <a class="nav-link" href="{% url 'login'%}">Login</a>
                     </li>
                 {% endif %}
+                <li class="nav-item mr-3">
+                    <a class="nav-link" href="{% url 'vacancy_list'%}">Check Vacancies</a>
+                </li>
+                <li class="nav-item mr-3">
+                    <a class="nav-link" href="{% url 'feedback_list'%}">Check Feedbacks</a>
+                </li>
+                <li class="nav-item mr-3">
+                    <a class="nav-link" href="#info" >Check Company Info</a>
+                </li>
+                <li class="nav-item mr-3">
+                    <a class="nav-link" href="#affiliates" >Check Affiliates Info</a>
+                </li>
+                <li class="nav-item mr-3">
+                    <a class="nav-link" href="{% url 'insurance_list'%}">Check Insurance types</a>
+                </li>
             </ul>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="row">
-            <!-- Vacancies Card -->
-            <div class="col-sm-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Vacancies</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a class="btn btn-primary" href="{% url 'vacancy_list'%}">Check Vacancies</a>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Feedbacks Card -->
-            <div class="col-sm-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Feedbacks</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a class="btn btn-primary" href="{% url 'feedback_list'%}">Check Feedbacks</a>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Company Info Card -->
-            <div class="col-sm-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Company Info</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#info" class="btn btn-primary">Check Company Info</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Affiliates Info</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#affiliates" class="btn btn-primary">Check Affiliates Info</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Insurance types</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a class="btn btn-primary" href="{% url 'insurance_list'%}">Check Insurance types</a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <div class="container">
-        <marquee behavior="scroll" direction="left" scrollamount="5">
-            Looking for news?. Check this
-            <a href="#news">News</a>
-        </marquee>            
-    </div>
+    <h1>{% block header %}{% endblock header %}</h1>
+    <div>{% block content%}{% endblock content %}</div>
 
 
     <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            <marquee behavior="scroll" direction="left" scrollamount="5">
+                Looking for news?. Check this
+                <a href="#news">News</a>
+            </marquee>            
+        </div>
         <div class="container">
             <span class="text-muted">Powered by Victor Shyshko</span>
             <ul class="list-unstyled">
