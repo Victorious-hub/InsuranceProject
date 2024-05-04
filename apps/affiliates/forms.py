@@ -21,6 +21,7 @@ class PolicyForm(forms.ModelForm):
         exclude = ('agent',)
     
     def __init__(self, *args, **kwargs):
+        contract = kwargs.pop('contract', None)
         super(PolicyForm, self).__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'

@@ -2,6 +2,7 @@ from django.db import models
 from apps.users.models import Agent, Client, Affiliate
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from .constants import CONTRACTS, INSURANCE
 
@@ -128,6 +129,7 @@ class Policy(models.Model):
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     insurance_sum = models.FloatField(default=0)
+    price = models.FloatField(default=0)
     start_date = models.DateField()
     end_date = models.DateField()
 
@@ -162,5 +164,16 @@ class Vacancy(BaseModel):
         return f"Vacancy: {self.title}"
 
 
+class Coupon(BaseModel):
+    code = models.CharField(max_length=255, unique=True)
+    discount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "coupon"
+        verbose_name_plural = "coupons"
+
+    def __str__(self):
+        return f"Coupon: {self.code}"
 
     

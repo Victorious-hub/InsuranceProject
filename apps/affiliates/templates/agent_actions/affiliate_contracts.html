@@ -23,7 +23,7 @@
                         {% for risk in item.insurance_risk.all %}
                             <p class="truncate">Insurance risk: {{ risk }}</p>
                         {% endfor %}
-                        <a href="{% url 'policy_create' user.id %}" class="btn btn-primary">Create Policy</a>
+                        <a href="{% url 'policy_create' item.id %}" class="btn btn-primary">Create Policy</a>
                         <hr>
                     {% endfor %}
                 </ul>

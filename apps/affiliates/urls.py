@@ -3,7 +3,8 @@ from django.urls import path
 from .views import (
     AgentContractsListView,
     BaseView,
-    ClientContractListView, 
+    ClientContractListView,
+    ConfirmPolicyCreateView, 
     ContractCreateView, 
     FeedbackListView, 
     InsuranceListView,
@@ -13,6 +14,7 @@ from .views import (
 
 
 urlpatterns = [
+    path('client/contracts/policy/<int:pk>', ConfirmPolicyCreateView.as_view(), name='client_policy'),
     path('client/contracts/<int:pk>', ClientContractListView.as_view(), name='client_contracts'),
     path('policy/create/<int:pk>', PolicyCreateView.as_view(), name='policy_create'),          
     path('contract/create/<int:pk>', ContractCreateView.as_view(), name='contract_create'),

@@ -1,7 +1,7 @@
 from apps.users.models import Agent, Client, Feedback
 from apps.users.utils import get_object
 from .constants import CREATED
-from .models import Contract, InsuranceType, Vacancy
+from .models import Contract, InsuranceType, Policy, Vacancy
 from django.db.models import Q
 
 def vacancy_list() -> Vacancy:
@@ -27,5 +27,9 @@ def get_contracts(pk: int) -> Contract:
     return contracts
 
 def get_client_contract(pk: int) -> Contract:
-    contracts = get_client_contracts(pk)
-    return contracts
+    contract = get_object(Contract, id=pk)
+    return contract
+
+def get_client_policy(pk: int) -> Policy:
+    policy = get_object(Policy, id=pk)
+    return policy

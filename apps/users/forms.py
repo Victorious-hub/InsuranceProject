@@ -117,6 +117,7 @@ class AgentUpdateForm(forms.ModelForm, ValidationMixin):
             })
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+            
 
 class FeedbackForm(forms.ModelForm):
     class Meta:
@@ -127,12 +128,7 @@ class FeedbackForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
-        self.fields['created_at'].widget = forms.widgets.DateInput(
-            attrs={
-                'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',
-                'class': 'form-control'
-                }
-            )
+            
 
 class BalanceForm(forms.ModelForm):
     class Meta:

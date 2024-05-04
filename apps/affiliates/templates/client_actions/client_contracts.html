@@ -41,7 +41,7 @@
                                     <td>{{ contract.client }}</td>
                                 </tr>
                             </table>
-                            <a href="# class="btn btn-primary">Pay</a>
+                            <a href="{% url 'client_policy' contract.id %}"btn btn-primary">Pay</a>
                         </div>
                     </div>
                 {% endif %}

@@ -1,23 +1,26 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
+
+from .constants import COMPLETED
 from .decorators import agent_required, client_required
 from .models import Contract, Policy
 from .forms import ContractForm, PolicyForm
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
-
-from django.core.paginator import Paginator
+from django.contrib import messages
 
 from .selectors import (
     feedback_list,
+    get_client_contract,
     get_client_contracts,
+    get_client_policy,
     get_contracts, 
     incurance_list, 
     vacancy_list
 )
 
-from .services import contract_create, policy_create
+from .services import apply_coupon_and_pay, contract_create, policy_create
 
 @method_decorator(client_required, name='dispatch')
 class ContractCreateView(View):
@@ -77,12 +80,12 @@ class PolicyCreateView(View):
     success_url = 'agent_profile'
 
     def get(self, request, pk):
-        form = self.form_class()
+        contract = get_client_contract(pk)
+        form = self.form_class(initial={'contract': contract})
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, pk):
         form = self.form_class(request.POST)
-        print(form)
         if form.is_valid():
             policy = policy_create(pk, form.data)
             if policy:
@@ -113,4 +116,22 @@ class ClientContractListView(View):
     def get(self, request, pk):
         contracts = get_contracts(pk)
         return render(request, self.template_name, {'contracts': contracts})
-    
+
+@method_decorator(client_required, name='dispatch')
+class ConfirmPolicyCreateView(View):
+    template_name = 'client_actions/policy_confirm.html'
+    success_url = 'client_profile'
+
+    def get(self, request, pk):
+        policy = get_client_policy(pk)
+        return render(request, self.template_name, {'policy': policy})
+
+    def post(self, request, pk):
+        coupon_code = request.POST.get('coupon')
+        policy = get_client_policy(pk)
+        success = apply_coupon_and_pay(policy, coupon_code)
+        if success:
+            return redirect(reverse('main'))
+        else:
+            messages.error(request, "Coupon is not valid!")
+            return render(request, self.template_name, {'policy': policy})
