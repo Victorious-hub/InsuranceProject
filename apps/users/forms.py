@@ -101,7 +101,7 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
 class AgentUpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
         model = Agent
-        exclude = ('user', 'affiliate',)
+        exclude = ('user', 'affiliate', 'salary', 'tariff_rate')
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

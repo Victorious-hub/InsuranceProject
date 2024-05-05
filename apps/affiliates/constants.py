@@ -10,10 +10,12 @@ CONTRACTS = (
     (COMPLETED, 'Completed'),
 )
 
-MEDICAL = 1
-HOUSE = 2
+MEDICAL = 10
+HOUSE = 20
+CAR = 30
 
 INSURANCE = (
     (MEDICAL, 'Medical Insuracne'),
     (HOUSE, 'House Insuracne'),
+    (HOUSE, 'Car'),
 )

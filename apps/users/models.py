@@ -72,6 +72,8 @@ class Client(models.Model):
 class Agent(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     affiliate = models.ForeignKey(Affiliate, on_delete=models.CASCADE)
+    salary = models.FloatField(default=0)
+    tariff_rate = models.IntegerField(default=10)
 
     class Meta:
         verbose_name = "agent"

@@ -1,6 +1,6 @@
 from apps.users.models import Affiliate, Agent, Client
 from apps.users.utils import get_object
-from .constants import COMPLETED, CONFIRMED, CREATED
+from .constants import CAR, COMPLETED, CONFIRMED, CREATED, HOUSE, INSURANCE, MEDICAL
 from .models import (
     Contract,
     Coupon, 
@@ -46,6 +46,18 @@ def policy_create(pk: int, data) -> Policy:
         price=data.get('price')
     )
 
+    match contract.insurance_type.type:
+        case 1:
+            print("MEDICAL")
+            agent.salary += (MEDICAL/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
+        case 2:
+            print("HOUSE")
+            agent.salary += (HOUSE/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
+        case 3:
+            print("CAR")
+            agent.salary += (CAR/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
+
+    agent.save()
     obj.full_clean()
     obj.save()
     return obj

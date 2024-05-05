@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -22,6 +23,8 @@ from .selectors import (
 
 from .services import apply_coupon_and_pay, contract_create, policy_create
 
+affiliate_logger = logging.getLogger('affiliates')
+
 @method_decorator(client_required, name='dispatch')
 class ContractCreateView(View):
     template_name = 'client_actions/contract_create.html'
@@ -38,12 +41,14 @@ class ContractCreateView(View):
         if form.is_valid():
             contract = contract_create(pk, form.data)
             if contract:
+                affiliate_logger.info(f"Created contract for client: {form.data.get('client')}")
                 client_profile_url = reverse(self.success_url, kwargs={'pk': pk})
                 return redirect(client_profile_url)
         return render(request, self.template_name, {'form': form})
 
 
 class BaseView(TemplateView):
+    affiliate_logger.info(f"Main page")
     template_name = 'main/base.html'
 
 
@@ -52,6 +57,7 @@ class VacnacyListView(TemplateView):
 
     def get(self, request):
         vacancies = vacancy_list()
+        affiliate_logger.info(f"Vacancy list page")
         return render(request, self.template_name, context={'vacancies': vacancies})
 
 
@@ -60,6 +66,7 @@ class FeedbackListView(View):
 
     def get(self, request):
         feedbacks = feedback_list()
+        affiliate_logger.info(f"Feedback list page")
         return render(request, self.template_name, context={'feedbacks': feedbacks})
 
 
@@ -68,7 +75,7 @@ class InsuranceListView(View):
 
     def get(self, request):
         insurance = incurance_list()
-        print(insurance)
+        affiliate_logger.info(f"Insurance list page")
         return render(request, self.template_name, context={"insurance": insurance})
 
 
@@ -89,6 +96,7 @@ class PolicyCreateView(View):
         if form.is_valid():
             policy = policy_create(pk, form.data)
             if policy:
+                affiliate_logger.info(f"Policy for client: {request.user}")
                 agent_profile_url = reverse(self.success_url, kwargs={'pk': pk})
                 return redirect(agent_profile_url)
         return render(request, self.template_name, {'form': form})
@@ -115,6 +123,7 @@ class ClientContractListView(View):
 
     def get(self, request, pk):
         contracts = get_contracts(pk)
+        affiliate_logger.info(f"Client contract list: {request.user}")
         return render(request, self.template_name, {'contracts': contracts})
 
 @method_decorator(client_required, name='dispatch')
@@ -131,7 +140,10 @@ class ConfirmPolicyCreateView(View):
         policy = get_client_policy(pk)
         success = apply_coupon_and_pay(policy, coupon_code)
         if success:
+            affiliate_logger.info(f"Policy successfully confirmed: {request.user}")
             return redirect(reverse('main'))
         else:
+            affiliate_logger.info(f"Error to confirm policy: {request.user}")
             messages.error(request, "Coupon is not valid!")
             return render(request, self.template_name, {'policy': policy})
+        
