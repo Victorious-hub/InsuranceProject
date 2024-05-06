@@ -5,14 +5,18 @@ from pytest_factoryboy import register
 from faker import Factory as FakerFactory
 
 from apps.users.tests.factories import (
-    CustomUserFactory, 
+    CustomUserClientFactory, 
+    CustomUserAgentFactory, 
     ClientFactory,
-    AgentFactory
+    AgentFactory,
+    AffiliateFactory
 )
 
 faker = FakerFactory.create()
 
 
-register(CustomUserFactory)
+register(CustomUserClientFactory)
+register(CustomUserAgentFactory)
+register(AffiliateFactory)
 register(ClientFactory)
 register(AgentFactory)

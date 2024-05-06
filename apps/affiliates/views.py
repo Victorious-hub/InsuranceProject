@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 
-from .constants import COMPLETED
+from .utils import client_age_mean, client_age_median, client_age_mode, client_list, policy_comleted_list_price
 from .decorators import agent_required, client_required
 from .models import Contract, Policy
 from .forms import ContractForm, PolicyForm
@@ -52,11 +52,16 @@ class BaseView(TemplateView):
     template_name = 'main/base.html'
 
 
-class VacnacyListView(TemplateView):
+class VacnacyListView(View):
     template_name = 'main/vacancy.html'
 
     def get(self, request):
         vacancies = vacancy_list()
+        print(policy_comleted_list_price())
+        print(client_list())
+        print(client_age_median())
+        print(client_age_mode())
+        print(client_age_mean())
         affiliate_logger.info(f"Vacancy list page")
         return render(request, self.template_name, context={'vacancies': vacancies})
 
@@ -144,6 +149,9 @@ class ConfirmPolicyCreateView(View):
             return redirect(reverse('main'))
         else:
             affiliate_logger.info(f"Error to confirm policy: {request.user}")
-            messages.error(request, "Coupon is not valid!")
+            messages.error(request, "Coupon is not valid or not enough balance!")
             return render(request, self.template_name, {'policy': policy})
-        
+
+
+class StatisticsView(View):
+    template_name = "admin_actions/statistics.html"

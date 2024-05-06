@@ -62,17 +62,25 @@ def policy_create(pk: int, data) -> Policy:
     obj.save()
     return obj
 
-def apply_coupon_and_pay(policy: Policy, code: str):
-    get_coupon: Coupon = get_object(Coupon, code=code)
-    if get_coupon is not None and get_coupon.active:
-        policy.price = policy.price * (get_coupon.discount/100)
+def apply_discount_if_coupon_exists(policy: Policy, code: str):
+    if code:
+        coupon: Coupon = get_object(Coupon, code=code)
+        if coupon and coupon.active:
+            policy.price *= (coupon.discount / 100)
+            coupon.active = False
+            coupon.save()
+
+def deduct_balance_and_complete_contract(policy: Policy):
+    client = policy.contract.client
+    if client.balance >= policy.price:
+        client.balance -= policy.price
         policy.contract.is_completed = COMPLETED
+        client.save()
+        policy.contract.save()
         policy.save()
-        policy.contract.save()
-        get_coupon.save()
-        return True
-    elif code == "":
-        policy.contract.is_completed = COMPLETED
-        policy.contract.save()
         return True
     return False
+
+def apply_coupon_and_pay(policy: Policy, code: str):
+    apply_discount_if_coupon_exists(policy, code)
+    return deduct_balance_and_complete_contract(policy)

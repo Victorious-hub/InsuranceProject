@@ -31,5 +31,5 @@ def get_client_contract(pk: int) -> Contract:
     return contract
 
 def get_client_policy(pk: int) -> Policy:
-    policy = get_object(Policy, id=pk)
+    policy = get_object(Policy, contract__id=pk)
     return policy
