@@ -8,7 +8,8 @@ from .views import (
     ContractCreateView, 
     FeedbackListView, 
     InsuranceListView,
-    PolicyCreateView, 
+    PolicyCreateView,
+    StatisticsView, 
     VacnacyListView
 )
 
@@ -23,4 +24,5 @@ urlpatterns = [
     path('feedbacks/', FeedbackListView.as_view(), name='feedback_list'),
     path('insurance/', InsuranceListView.as_view(), name='insurance_list'),
     path('agent/client/contracts/<int:pk>', AgentContractsListView.as_view(), name='client_contract_list'),
+    path('admin/statisctics/<int:pk>', StatisticsView.as_view(), name='stat')
 ] 

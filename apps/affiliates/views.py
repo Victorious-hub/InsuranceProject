@@ -155,3 +155,19 @@ class ConfirmPolicyCreateView(View):
 
 class StatisticsView(View):
     template_name = "admin_actions/statistics.html"
+
+    def get(self, request, pk):
+        total_clients = client_list()
+        total_policy_price = policy_comleted_list_price()
+        client_median = client_age_median()
+        client_mean = client_age_mean()
+        client_mode = client_age_mode()
+        return render(
+            request, 
+            self.template_name, 
+            {'total_clients': total_clients,
+             'total_policy_price': total_policy_price['price__sum'],
+             'client_median': client_median,
+             'client_mean': client_mean,
+             'client_mode': client_mode
+            })

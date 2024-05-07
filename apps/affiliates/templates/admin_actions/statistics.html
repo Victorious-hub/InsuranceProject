@@ -1,0 +1,14 @@
+{% extends "main/base.html" %}
+{% block title %}Statistics{% endblock title %}
+{% block header %}Statistics{% endblock header %}
+
+{% block content %}
+    <p>Total clients:</p>
+    {% for item in total_clients %}
+        <p>{{ item }}</p>
+    {% endfor %}
+    <p>Total policy price: {{ total_policy_price }}</p>
+    <p>Client age median: {{ client_median }}</p>
+    <p>Client age mean: {{ client_mean }}</p>
+    <p>Client age mode: {{ client_mode }}</p>
+{% endblock content %}

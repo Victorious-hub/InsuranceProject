@@ -8,75 +8,87 @@
     <link rel="stylesheet" href="{% static "main/css/main.css" %}">
     <title>Main Page</title>
 </head>
-
+<style>
+    .page-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+    .content-wrap {
+        flex: 1;
+    }
+</style>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Company Name</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                {% if request.user.is_authenticated and request.user.role == 1 %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'client_profile' user.id%}">Client Profile</a>
-                    </li>
-                {% elif request.user.is_authenticated and request.user.role == 2 %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'agent_profile' user.id%}">Agent Profile</a>
-                    </li>
-                {% elif request.user.is_authenticated and request.user.is_superuser == True %}
-                    <li class="nav-item">
-                        <a href="{% url 'admin:index' %}">Go to admin page</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'admin/statistics' user.id %}">Check for statistics</a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'client_register'%}">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login'%}">Login</a>
-                    </li>
-                {% endif %}
-                <li class="nav-item mr-3">
-                    <a class="nav-link" href="{% url 'vacancy_list'%}">Check Vacancies</a>
-                </li>
-                <li class="nav-item mr-3">
-                    <a class="nav-link" href="{% url 'feedback_list'%}">Check Feedbacks</a>
-                </li>
-                <li class="nav-item mr-3">
-                    <a class="nav-link" href="#info" >Check Company Info</a>
-                </li>
-                <li class="nav-item mr-3">
-                    <a class="nav-link" href="#affiliates" >Check Affiliates Info</a>
-                </li>
-                <li class="nav-item mr-3">
-                    <a class="nav-link" href="{% url 'insurance_list'%}">Check Insurance types</a>
-                </li>
-            </ul>
+    <div class="page-container">
+        <div class="content-wrap">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">Company Name</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        {% if request.user.is_authenticated and request.user.role == 1 %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'client_profile' user.id%}">Client Profile</a>
+                            </li>
+                        {% elif request.user.is_authenticated and request.user.role == 2 %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'agent_profile' user.id%}">Agent Profile</a>
+                            </li>
+                        {% elif request.user.is_authenticated and request.user.is_superuser == True %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'admin:index' %}">Go to admin page</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'stat' user.id %}">Check for statistics</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'client_register'%}">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login'%}">Login</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="{% url 'vacancy_list'%}">Check Vacancies</a>
+                        </li>
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="{% url 'feedback_list'%}">Check Feedbacks</a>
+                        </li>
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="#info" >Check Company Info</a>
+                        </li>
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="#affiliates" >Check Affiliates Info</a>
+                        </li>
+                        <li class="nav-item mr-3">
+                            <a class="nav-link" href="{% url 'insurance_list'%}">Check Insurance types</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        
+            <h1>{% block header %}{% endblock header %}</h1>
+            <div>{% block content%}{% endblock content %}</div>
         </div>
-    </nav>
-
-    <h1>{% block header %}{% endblock header %}</h1>
-    <div>{% block content%}{% endblock content %}</div>
-
-    <footer class="footer mt-auto py-3 bg-light">
-        <div class="container">
-            <marquee behavior="scroll" direction="left" scrollamount="5">
-                Looking for news?. Check this
-                <a href="#news">News</a>
-            </marquee>            
-        </div>
-        <div class="container">
-            <span class="text-muted">Powered by Victor Shyshko</span>
-            <ul class="list-unstyled">
-                <li><a href="https://github.com/Victorious-hub">Github repo</a></li>
-                <li><a href="https://www.linkedin.com/in/victor-shyshko-205a04274/">LinkedIn repo</a></li>
-            </ul>
-        </div>
-    </footer>
+        <footer class="footer mt-auto py-3 bg-light">
+            <div class="container">
+                <marquee behavior="scroll" direction="left" scrollamount="5">
+                    Looking for news?. Check this
+                    <a href="#news">News</a>
+                </marquee>            
+            </div>
+            <div class="container">
+                <span class="text-muted">Powered by Victor Shyshko</span>
+                <ul class="list-unstyled">
+                    <li><a href="https://github.com/Victorious-hub">Github repo</a></li>
+                    <li><a href="https://www.linkedin.com/in/victor-shyshko-205a04274/">LinkedIn repo</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
