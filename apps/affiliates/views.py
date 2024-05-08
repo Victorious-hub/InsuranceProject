@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 
-from .utils import client_age_mean, client_age_median, client_age_mode, client_list, policy_comleted_list_price
+from .utils import client_age_mean, client_age_median, client_age_mode, client_list, plot_policy_sale, policy_comleted_list_price
 from .decorators import agent_required, client_required
 from .models import Contract, Policy
 from .forms import ContractForm, PolicyForm
@@ -47,6 +47,18 @@ class ContractCreateView(View):
         return render(request, self.template_name, {'form': form})
 
 
+@method_decorator(client_required, name='dispatch')
+class ClientPolicyDetail(View):
+    template_name = 'client_actions/policy_detail.html'
+    model = Policy
+
+    def get(self, request, pk):
+        policy = get_client_policy(pk)
+        print(policy)
+        affiliate_logger.info(f"Client policy detail")
+        return render(request, self.template_name, context={'policy': policy})
+
+
 class BaseView(TemplateView):
     affiliate_logger.info(f"Main page")
     template_name = 'main/base.html'
@@ -57,11 +69,6 @@ class VacnacyListView(View):
 
     def get(self, request):
         vacancies = vacancy_list()
-        print(policy_comleted_list_price())
-        print(client_list())
-        print(client_age_median())
-        print(client_age_mode())
-        print(client_age_mean())
         affiliate_logger.info(f"Vacancy list page")
         return render(request, self.template_name, context={'vacancies': vacancies})
 
@@ -162,12 +169,14 @@ class StatisticsView(View):
         client_median = client_age_median()
         client_mean = client_age_mean()
         client_mode = client_age_mode()
+        plot_policy_sale()
         return render(
             request, 
             self.template_name, 
-            {'total_clients': total_clients,
-             'total_policy_price': total_policy_price['price__sum'],
-             'client_median': client_median,
-             'client_mean': client_mean,
-             'client_mode': client_mode
+            {
+                'total_clients': total_clients,
+                'total_policy_price': total_policy_price['price__sum'],
+                'client_median': client_median,
+                'client_mean': client_mean,
+                'client_mode': client_mode
             })

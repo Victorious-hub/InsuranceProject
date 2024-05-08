@@ -125,7 +125,7 @@ class Contract(models.Model):
         return f"Contract for client: {self.client.user.first_name}"
 
 
-class Policy(models.Model):
+class Policy(BaseModel):
     agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     insurance_sum = models.FloatField(default=0)

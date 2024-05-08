@@ -8,7 +8,22 @@
     <link rel="stylesheet" href="{% static "client/css/contract_kanban.css" %}">
     <title>Main Page</title>
 </head>
+<style>
+.kanban {
+    display: flex;
+    justify-content: space-between;
+}
 
+.kanban-column {
+    flex: 1;
+    border-right: 1px solid #ccc;
+    padding: 20px;
+}
+
+.kanban-column:last-child {
+    border-right: none;
+}
+</style>
 <body>
     <div class="kanban">
         <div class="kanban-column">
@@ -17,12 +32,12 @@
                 {% if contract.is_completed == 1 %}
                     <div class="card mb-3">
                         <div class="card-body">
-                            <table>
-                                <tr>
-                                    <td>{{ contract.is_completed }}</td>
-                                    <td>{{ contract.client }}</td>
-                                </tr>
-                            </table>
+                            <ul>
+                                <li>{{ contract.client }}</li>
+                                <li>{{ contract.affiliate }}</li>
+                                <li>{{ contract.created_at }}</li>
+                                <li>{{ contract.insurance_object }}</li>
+                            </ul>
                         </div>
                     </div>
                 {% endif %}
@@ -35,12 +50,12 @@
                 {% if contract.is_completed == 2 %}
                     <div class="card mb-3">
                         <div class="card-body">
-                            <table>
-                                <tr>
-                                    <td>{{ contract.is_completed }}</td>
-                                    <td>{{ contract.client }}</td>
-                                </tr>
-                            </table>
+                            <ul>
+                                <li>{{ contract.client }}</li>
+                                <li>{{ contract.affiliate }}</li>
+                                <li>{{ contract.created_at }}</li>
+                                <li>{{ contract.insurance_object }}</li>
+                            </ul>
                             <a href="{% url 'client_policy' contract.id %}"btn btn-primary">Pay</a>
                         </div>
                     </div>
@@ -54,13 +69,13 @@
                 {% if contract.is_completed == 3 %}
                     <div class="card mb-3">
                         <div class="card-body">
-                            <table>
-                                <tr>
-                                    <td>{{ contract.is_completed }}</td>
-                                    <td>{{ contract.client }}</td>
-                                </tr>
-                            </table>
-                           
+                            <ul>
+                                <li>{{ contract.client }}</li>
+                                <li>{{ contract.affiliate }}</li>
+                                <li>{{ contract.created_at }}</li>
+                                <li>{{ contract.insurance_object }}</li>
+                            </ul>  
+                            <a href="{% url 'client_policy_detail' contract.id %}"btn btn-primary">Detail</a>
                         </div>
                     </div>
                 {% endif %}

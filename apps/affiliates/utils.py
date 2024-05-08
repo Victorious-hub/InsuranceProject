@@ -1,4 +1,8 @@
 
+import os
+from django.conf import settings
+import pandas as pd
+import matplotlib.pyplot as plt
 from apps.users.models import Client
 from .constants import COMPLETED
 from .models import Policy
@@ -30,3 +34,15 @@ def client_age_mean():
     return mode(obj.values_list('user__age', flat=True))
 
 
+def plot_policy_sale():
+    policies = Policy.objects.values('agent__affiliate')
+    df = pd.DataFrame.from_records(policies)
+    counts = df['agent__affiliate'].value_counts()
+    counts.plot(kind='bar')
+
+    plt.xlabel('Affiliate')
+    plt.ylabel('Number of Policies')
+    plt.title('Total Policies by Affiliate')
+    plt.savefig(os.path.join(settings.MEDIA_ROOT, 'total_policies_by_affiliate.png'))
+
+    plt.close()
