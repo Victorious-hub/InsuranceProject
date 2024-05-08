@@ -10,11 +10,6 @@ class RegistrationForm(forms.ModelForm):
         model = CustomUser
         fields = ('email', 'first_name', 'last_name',)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
-
 
 class UpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
@@ -66,11 +61,6 @@ class LoginForm(forms.Form):
     email = forms.CharField(max_length=255)
     password = forms.CharField(max_length=255, widget=forms.PasswordInput)
 
-    def __init__(self, *args, **kwargs):
-        super(LoginForm, self).__init__(*args, **kwargs)
-        self.fields['email'].widget.attrs['class'] = 'form-control'
-        self.fields['password'].widget.attrs['class'] = 'form-control'
-
 
 class ClientForm(forms.ModelForm):
     class Meta:
@@ -94,8 +84,6 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
                 'gender': user.gender,
                 'age': user.age
             })
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
     
     def clean(self):
         self.check_age(self.cleaned_data.get('age'))
@@ -118,27 +106,15 @@ class AgentUpdateForm(forms.ModelForm, ValidationMixin):
                 'gender': user.gender,
                 'age': user.age
             })
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
             
 
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         exclude = ('client',)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
             
 
 class BalanceForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ('balance',)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
