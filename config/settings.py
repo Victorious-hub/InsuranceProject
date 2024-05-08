@@ -21,7 +21,6 @@ ALLOWED_HOSTS = []
 LOCAL_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.affiliates.apps.AffiliatesConfig',
-    'apps.main.apps.MainConfig',
 ]
 
 # Third party applications
@@ -90,6 +89,14 @@ DATABASES = {
     }
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 2525
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'shyskov@.ru'
+EMAIL_HOST_PASSWORD = 'app_password'
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -106,6 +113,39 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGGING = {
+    'version':1,
+    'disable_exiting_logger':False,
+    'formatters':{
+        "standard":{
+            "format" : "%(asctime)s %(levelname)s %(name)s %(message)s"
+        }
+    },
+    'handlers':{
+        'console': {
+            'class' : 'logging.StreamHandler',
+            'formatter': "standard",
+        },
+        'file': {
+            'class' : 'logging.FileHandler',
+            'formatter': "standard",
+            'filename' : "info.log"
+        }
+    },
+    'loggers':{
+        'main':{
+            'handlers' : ['console', 'file'],
+            'level' : 'DEBUG',
+            'propagate' : True,
+        },
+        'affiliates':{
+            'handlers' : ['console', 'file'],
+            'level' : 'DEBUG',
+            'propagate' : True,
+        }
+    }
+}
 
 
 # Internationalization

@@ -2,7 +2,7 @@
 from django import forms
 
 from .mixins import ValidationMixin
-from .models import Agent, Client, CustomUser
+from .models import Agent, Client, CustomUser, Feedback
 
 
 class RegistrationForm(forms.ModelForm):
@@ -16,11 +16,11 @@ class RegistrationForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
-class UpdateForm(forms.ModelForm):
+class UpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
         model = CustomUser
         fields = ('first_name', 'last_name', 'gender', 'age', 'profile_image',)
-    
+
  
 class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -28,7 +28,7 @@ class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
 
     class Meta:
         model = Client
-        exclude = ('address', 'phone', 'user',)
+        exclude = ('address', 'phone', 'user', 'balance',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -37,8 +37,8 @@ class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
 
 
     def clean(self):
-        self._clean_email(self.cleaned_data.get('email'))
-        self._clean_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
+        self.check_email(self.cleaned_data.get('email'))
+        self.check_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
 
     
 class AgentRegistrationForm(forms.ModelForm, ValidationMixin):
@@ -96,12 +96,15 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
             })
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+    
+    def clean(self):
+        self.check_age(self.cleaned_data.get('age'))
 
 
 class AgentUpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
         model = Agent
-        exclude = ('user', 'affiliate',)
+        exclude = ('user', 'affiliate', 'salary', 'tariff_rate')
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -115,3 +118,27 @@ class AgentUpdateForm(forms.ModelForm, ValidationMixin):
                 'gender': user.gender,
                 'age': user.age
             })
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+            
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        exclude = ('client',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+            
+
+class BalanceForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ('balance',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'

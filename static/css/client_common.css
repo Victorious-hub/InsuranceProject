@@ -1,0 +1,17 @@
+.form-box {
+  width: 400px; 
+  padding: 30px; 
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+  .full-height {
+    height: 110vh;
+}
+  .is-invalid {
+    border-color: #dc3545;
+}
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+}

@@ -1,0 +1,15 @@
+{% extends "main/base.html" %}
+{% block title %}Insurance type{% endblock title %}
+{% block header %}Insurance type{% endblock header %}
+
+{% block content %}
+    <ul>
+        {% for item in insurance %}
+            <p class="truncate">Type: {{ item.type }}</p>
+            <p class="truncate">Insurance sum: {{ item.insurance_sum }}</p>
+            <p class="truncate">Risks list: {{ item.risks }}</p>
+            <hr>
+        {% endfor %}
+    </ul>
+{% endblock content %}
+

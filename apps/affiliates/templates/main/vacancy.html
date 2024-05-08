@@ -1,0 +1,14 @@
+{% extends "main/base.html" %}
+{% block title %}Vacancies{% endblock title %}
+{% block header %}Vacancies{% endblock header %}
+
+{% block content %}
+    <ul>
+        {% for item in vacancies %}
+            <p class="truncate">Title: {{ item.title }}</p>
+            <p class="truncate">Description: {{ item.description }}</p>
+            <p class="truncate">Created at: {{ item.created_at }}</p>
+            <hr>
+        {% endfor %}
+    </ul>
+{% endblock content %}

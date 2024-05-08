@@ -1,7 +1,8 @@
-from apps.affiliates.models import Contract
+
 from .constants import AGENT, CLIENT
 from .utils import get_object
-from .models import Agent, Client, CustomUser
+from django.contrib.auth.models import Group
+from .models import Agent, Client, CustomUser, Feedback
 from django.contrib.auth.hashers import make_password
 
 
@@ -42,15 +43,6 @@ def agent_register(data) -> Client:
     client.save()
     return client
 
-
-def client_get(pk: int) -> Client:
-    client = get_object(Client, user__id=pk)
-    return client
-
-def agent_get(pk: int) -> Client:
-    agent = get_object(Agent, user__id=pk)
-    return agent
-
 def client_update(pk: int, data, profile_image) -> Client:
     client: Client = get_object(Client, user__id=pk)
     client.address = data.get('address')
@@ -77,8 +69,23 @@ def agent_update(pk: int, data, profile_image) -> Agent:
     agent.save()
     return agent
 
-def contract_agent_list(id: int) -> Contract:
-    agent = get_object(Agent, user__id=id)
 
-    obj = Contract.objects.filter(agent=agent)
+def feedback_create(pk: int, data) -> Feedback:
+    client = get_object(Client, user__id=pk)
+    obj = Feedback.objects.create(
+        client=client,
+        title=data.get('title'),
+        description=data.get('description'),
+        rating=data.get('rating')
+    )
+    obj.full_clean()
+    obj.save()
     return obj
+
+def balance_update(pk: int, data) -> Client:
+    client: Client = get_object(Client, user__id=pk)
+    client.balance += int(data.get('balance'))
+
+    client.save()
+    return client
+

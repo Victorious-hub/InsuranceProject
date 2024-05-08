@@ -1,12 +1,12 @@
-from django.conf import settings
+from django.core.validators import MinValueValidator, RegexValidator, MaxValueValidator
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.utils.text import slugify
 from PIL import Image
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.hashers import make_password
 
 from .constants import GENDERS, ROLE_CHOICES
-from django.contrib.auth.hashers import make_password
 from .managers import UserManager
 
 class Affiliate(models.Model):
@@ -27,12 +27,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255)
     gender = models.CharField(max_length=255, choices=GENDERS, blank=True, null=True)
     last_name = models.CharField(max_length=255)
-    age = models.PositiveIntegerField(blank=True, null=True, default=0)
-    created_at = models.DateTimeField(default=timezone.now)
+    age = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(18), MaxValueValidator(120)])
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, blank=True, null=True)
+    role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
     profile_image = models.ImageField(null=True, blank=True, upload_to="images/")
 
     USERNAME_FIELD = 'email'
@@ -58,7 +58,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, blank=True)
-    phone = models.CharField(max_length=255, blank=True)
+    phone = models.CharField(max_length=255, blank=True, validators=[RegexValidator(r"\+375 \((29|33|25)\) \d{3}-\d{2}-\d{2}")])
+    balance = models.FloatField(default=0)
 
     class Meta:
         verbose_name = "client"
@@ -71,6 +72,8 @@ class Client(models.Model):
 class Agent(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     affiliate = models.ForeignKey(Affiliate, on_delete=models.CASCADE)
+    salary = models.FloatField(default=0)
+    tariff_rate = models.IntegerField(default=10)
 
     class Meta:
         verbose_name = "agent"
@@ -84,8 +87,9 @@ class Feedback(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    rating = models.IntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
 
     class Meta:
         verbose_name = "feedback"

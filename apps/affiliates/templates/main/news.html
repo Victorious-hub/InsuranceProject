@@ -1,0 +1,18 @@
+{% extends "main/base.html" %}
+{% block title %}News{% endblock title %}
+{% block header %}News{% endblock header %}
+
+{% block content %}
+<h1>Vacancy list</h1>
+<ul>
+    {% for item in news %}
+        <p class="truncate">Title: {{ item.title }}</p>
+        <p class="truncate">Description: {{ item.description }}</p>
+        <p class="truncate">Salary: {{ item.salary }}</p>
+        <p class="truncate">Experience: {{ item.experience }}</p>
+        <p class="truncate">Created at: {{ item.created_at }}</p>
+        <hr>
+    {% endfor %}
+</ul>
+{% endblock content %}
+
