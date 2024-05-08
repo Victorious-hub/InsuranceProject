@@ -16,11 +16,11 @@ class RegistrationForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control'
 
 
-class UpdateForm(forms.ModelForm):
+class UpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
         model = CustomUser
         fields = ('first_name', 'last_name', 'gender', 'age', 'profile_image',)
-    
+
  
 class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -37,8 +37,8 @@ class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
 
 
     def clean(self):
-        self._clean_email(self.cleaned_data.get('email'))
-        self._clean_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
+        self.check_email(self.cleaned_data.get('email'))
+        self.check_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
 
     
 class AgentRegistrationForm(forms.ModelForm, ValidationMixin):
@@ -96,6 +96,9 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
             })
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+    
+    def clean(self):
+        self.check_age(self.cleaned_data.get('age'))
 
 
 class AgentUpdateForm(forms.ModelForm, ValidationMixin):
