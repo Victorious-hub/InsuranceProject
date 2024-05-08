@@ -1,4 +1,3 @@
-from django.core.validators import MinValueValidator, RegexValidator, MaxValueValidator
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -8,6 +7,14 @@ from django.contrib.auth.hashers import make_password
 
 from .constants import GENDERS, ROLE_CHOICES
 from .managers import UserManager
+
+from django.core.validators import (
+    MinValueValidator, 
+    RegexValidator, 
+    MaxValueValidator, 
+    MinLengthValidator,
+    MaxLengthValidator
+)
 
 class Affiliate(models.Model):
     name = models.CharField(max_length=255, blank=True)
@@ -21,8 +28,8 @@ class Affiliate(models.Model):
     def __str__(self):
         return f"Affiliate: {self.name}"
 
-
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+# здесь можете с нуля user не создавать кста. Есть AbstractUser просто
+class CustomUser(AbstractBaseUser, PermissionsMixin): 
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     gender = models.CharField(max_length=255, choices=GENDERS, blank=True, null=True)
@@ -58,7 +65,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=255, blank=True)
-    phone = models.CharField(max_length=255, blank=True, validators=[RegexValidator(r"\+375 \((29|33|25)\) \d{3}-\d{2}-\d{2}")])
+    phone = models.CharField(max_length=255, blank=True, validators=[RegexValidator(r"\+375 \((29|33|25)\) \d{3}-\d{2}-\d{2}"), MinLengthValidator(19), MaxLengthValidator(19)])
     balance = models.FloatField(default=0)
 
     class Meta:

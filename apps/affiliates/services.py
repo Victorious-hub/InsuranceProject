@@ -48,13 +48,10 @@ def policy_create(pk: int, data) -> Policy:
 
     match contract.insurance_type.type:
         case 1:
-            print("MEDICAL")
             agent.salary += (MEDICAL/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
         case 2:
-            print("HOUSE")
             agent.salary += (HOUSE/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
         case 3:
-            print("CAR")
             agent.salary += (CAR/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
 
     agent.save()

@@ -1,4 +1,4 @@
-from apps.affiliates.models import Company, BaseModel, Contacts, Contract, InsuranceObject, InsuranceRisk, News, Policy, Question, Answer, PrivacyPolicy, InsuranceType, Vacancy
+from apps.affiliates.models import Company, BaseModel, Contacts, Contract, Coupon, InsuranceObject, InsuranceRisk, News, Policy, Question, Answer, PrivacyPolicy, InsuranceType, Vacancy
 from apps.users.models import Agent
 from apps.users.tests.factories import AffiliateFactory, AgentFactory, ClientFactory
 import factory
@@ -96,3 +96,11 @@ class PolicyFactory(factory.django.DjangoModelFactory):
     price = factory.LazyFunction(lambda: faker.random_number())
     start_date = factory.LazyFunction(lambda: faker.date_between(start_date='-30d', end_date='today'))
     end_date = factory.LazyFunction(lambda: faker.date_between(start_date='today', end_date='+30d'))
+
+class CouponFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Coupon
+
+    code = 'TEST'
+    discount = factory.LazyFunction(lambda: faker.random_number())
+    active = True

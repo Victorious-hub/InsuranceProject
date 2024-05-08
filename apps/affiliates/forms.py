@@ -9,6 +9,11 @@ class ContractForm(forms.ModelForm):
         model = Contract
         fields = ('insurance_type', 'affiliate', 'insurance_object', 'insurance_risk',)
     
+    def __init__(self, *args, **kwargs):
+        super(ContractForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+                field.widget.attrs['class'] = 'form-control'
+
 
 class PolicyForm(forms.ModelForm):
     class Meta:
@@ -18,6 +23,8 @@ class PolicyForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         contract = kwargs.pop('contract', None)
         super(PolicyForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
         self.fields['start_date'].widget = forms.widgets.DateInput(
             attrs={
                 'type': 'date', 'placeholder': 'yyyy-mm-dd (DOB)',

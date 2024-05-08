@@ -18,7 +18,7 @@ class ValidationMixin:
         return password2
     
     def check_age(self, age) -> str:
-        if age < 18:
+        if age < 18 or age > 120:
             raise ValidationError("You must be 18+")
         return age
     

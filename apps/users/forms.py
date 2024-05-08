@@ -10,6 +10,11 @@ class RegistrationForm(forms.ModelForm):
         model = CustomUser
         fields = ('email', 'first_name', 'last_name',)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+
 
 class UpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
@@ -49,8 +54,8 @@ class AgentRegistrationForm(forms.ModelForm, ValidationMixin):
         self.fields.update(RegistrationForm().fields)
     
     def clean(self):
-        self._clean_email(self.cleaned_data.get('email'))
-        self._clean_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
+        self.check_email(self.cleaned_data.get('email'))
+        self.check_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
 
 
 class LoginForm(forms.Form):
@@ -60,6 +65,11 @@ class LoginForm(forms.Form):
 
     email = forms.CharField(max_length=255)
     password = forms.CharField(max_length=255, widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs['class'] = 'form-control'
+        self.fields['password'].widget.attrs['class'] = 'form-control'
 
 
 class ClientForm(forms.ModelForm):
@@ -84,7 +94,10 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
                 'gender': user.gender,
                 'age': user.age
             })
-    
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
+        
+
     def clean(self):
         self.check_age(self.cleaned_data.get('age'))
 
@@ -106,15 +119,27 @@ class AgentUpdateForm(forms.ModelForm, ValidationMixin):
                 'gender': user.gender,
                 'age': user.age
             })
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
             
 
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         exclude = ('client',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'
             
 
 class BalanceForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ('balance',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control'

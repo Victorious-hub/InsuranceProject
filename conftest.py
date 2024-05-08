@@ -3,7 +3,7 @@ from apps.users.constants import AGENT, CLIENT
 import pytest
 import factory
 
-from apps.affiliates.tests.factories import AnswerFactory, CompanyFactory, ContractFactory, InsuranceObjectFactory, InsuranceRiskFactory, InsuranceTypeFactory, NewsFactory, PolicyFactory, PrivacyPolicyFactory, QuestionFactory, VacancyFactory
+from apps.affiliates.tests.factories import AnswerFactory, CompanyFactory, ContractFactory, CouponFactory, InsuranceObjectFactory, InsuranceRiskFactory, InsuranceTypeFactory, NewsFactory, PolicyFactory, PrivacyPolicyFactory, QuestionFactory, VacancyFactory
 from pytest_factoryboy import register # type: ignore
 from faker import Factory as FakerFactory # type: ignore
 
@@ -77,6 +77,7 @@ def client_service_data_check_fixture():
     )
     return user
 
+
 register(CustomUserClientFactory)
 register(CustomUserAgentFactory)
 register(AffiliateFactory)
@@ -95,3 +96,4 @@ register(ContractFactory)
 register(InsuranceRiskFactory)
 register(InsuranceObjectFactory)
 register(InsuranceTypeFactory)
+register(CouponFactory)
