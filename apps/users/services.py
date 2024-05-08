@@ -22,8 +22,6 @@ def client_register(data) -> Client:
     )
     client.full_clean()
     client.save()
-    group, created = Group.objects.get_or_create(name='Client')
-    group.user_set.add(client.user)
     return client
 
 
