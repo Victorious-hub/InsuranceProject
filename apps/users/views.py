@@ -6,7 +6,6 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .constants import CLIENT, AGENT
 
@@ -31,7 +30,7 @@ from .services import (
     feedback_create
 )
 
-from .selectors import agent_get, contract_agent_list, client_get
+from .selectors import agent_get, policy_agent_list, client_get
 
 user_logger = logging.getLogger('main')
 
@@ -200,7 +199,7 @@ class ContractAgentListView(View):
     success_url = 'agent_profile'
 
     def get(self, request, pk):
-        contracts = contract_agent_list(pk)  
+        contracts = policy_agent_list(pk)  
         return render(request, self.template_name, context={'contracts': contracts})
 
 

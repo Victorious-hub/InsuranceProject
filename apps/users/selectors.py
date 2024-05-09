@@ -1,11 +1,11 @@
-from apps.affiliates.models import Contract, Client, Agent
+from apps.affiliates.models import Contract, Client, Agent, Policy
 from .utils import get_object
 
 
-def contract_agent_list(id: int) -> Contract:
+def policy_agent_list(id: int) -> Contract:
     agent = get_object(Agent, user__id=id)
 
-    obj = Contract.objects.filter(agent=agent)
+    obj = Policy.objects.filter(agent=agent)
     return obj
 
 def client_get(pk: int) -> Client:

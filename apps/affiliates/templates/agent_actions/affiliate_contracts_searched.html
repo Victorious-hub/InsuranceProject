@@ -1,0 +1,15 @@
+{% extends "agent_actions/affiliate_contracts.html" %}
+{% block title %}Searched contracts{% endblock title %}
+{% block header %}Searched contracts{% endblock header %}
+
+{% block content %}
+  <h2>Your Contracts</h2>
+  {% for contract in contracts %}
+    <div>
+      <h3>{{ contract.insurance_type }}</h3>
+      <p>{{ contract.insurance_object }}</p>
+    </div>
+  {% empty %}
+    <p>No contracts found.</p>
+  {% endfor %}
+{% endblock %}

@@ -14,9 +14,20 @@
         <div class="card">
             <div class="card-body">
                 <h1 class="card-title">Contract list</h1>
+                <!-- Add search form -->
+                <form method="post" action="{% url 'search_contracts' user.id%}">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Search contracts" name="searched">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
                 <ul>
                     {% for item in contracts %}
                         <p class="truncate">Client: {{ item.client.user }}</p>
+                        <p class="truncate">Affiliate: {{ item.affiliate }}</p>
                         <p class="truncate">Insurance type: {{ item.insurance_type }}</p>
                         <p class="truncate">Created at: {{ item.created_at }}</p>
                         <p class="truncate">Insurance object: {{ item.insurance_object }}</p>

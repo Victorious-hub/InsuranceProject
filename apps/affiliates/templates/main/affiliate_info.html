@@ -1,0 +1,15 @@
+{% extends "main/base.html" %}
+{% block title %}Affiliate{% endblock title %}
+{% block header %}Affiliates{% endblock header %}
+
+{% block content %}
+    <ul>
+        {% for item in affiliate %}
+            <p class="truncate">Name: {{ item.name }}</p>
+            <p class="truncate">Address: {{ item.address }}</p>
+            <p class="truncate">Phone: {{ item.phone }}</p>
+            <hr>
+        {% endfor %}
+    </ul>
+{% endblock content %}
+

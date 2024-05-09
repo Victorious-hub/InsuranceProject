@@ -6,8 +6,7 @@
     <ul>
         {% for item in insurance %}
             <p class="truncate">Type: {{ item.type }}</p>
-            <p class="truncate">Insurance sum: {{ item.insurance_sum }}</p>
-            <p class="truncate">Risks list: {{ item.risks }}</p>
+            <p class="truncate">Insurance description: {{ item.description }}</p>
             <hr>
         {% endfor %}
     </ul>

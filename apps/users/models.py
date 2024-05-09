@@ -19,7 +19,7 @@ from django.core.validators import (
 class Affiliate(models.Model):
     name = models.CharField(max_length=255, blank=True)
     address = models.CharField(max_length=255, blank=True)
-    phone = models.CharField(max_length=255, blank=True)
+    phone = models.CharField(max_length=255, blank=True, validators=[RegexValidator(r"\+375 \((29|33|25)\) \d{3}-\d{2}-\d{2}"), MinLengthValidator(19), MaxLengthValidator(19)])
 
     class Meta:
         verbose_name = "affiliate"

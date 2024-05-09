@@ -1,5 +1,6 @@
 
 import os
+import requests
 from django.conf import settings
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,7 +10,7 @@ from .models import Policy
 from django.db.models import Sum
 from statistics import median, mean, mode
 from django.db.models import Q
-import requests
+
 
 def client_list()->Client:
     obj = Client.objects.all().order_by('user__first_name')
@@ -32,6 +33,14 @@ def client_age_mode():
 def client_age_mean():
     obj = Client.objects.filter(~Q(user__age=None))
     return mode(obj.values_list('user__age', flat=True))
+
+def get_cat_info():
+    response = requests.get('https://catfact.ninja/fact')
+    return response.json()
+
+def get_age(name: str):
+    response = requests.get(f'https://api.agify.io/?name={name}')
+    return response.json()
 
 
 def plot_policy_sale():

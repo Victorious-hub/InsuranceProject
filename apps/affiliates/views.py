@@ -3,15 +3,21 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 
-from .utils import client_age_mean, client_age_median, client_age_mode, client_list, plot_policy_sale, policy_comleted_list_price
+from apps.users.models import Agent
+from apps.users.utils import get_object
+from .constants import CREATED
+
+from .utils import client_age_mean, client_age_median, client_age_mode, client_list, get_age, get_cat_info, plot_policy_sale, policy_comleted_list_price
 from .decorators import agent_required, client_required
-from .models import Contract, Policy
+from .models import Company, Contract, Policy
 from .forms import ContractForm, PolicyForm
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from django.db.models import Q
 
 from .selectors import (
+    affiliate_list,
     feedback_list,
     get_client_contract,
     get_client_contracts,
@@ -64,6 +70,24 @@ class BaseView(TemplateView):
     template_name = 'main/base.html'
 
 
+class CompanyDetailView(View):
+    template_name = 'main/company.html'
+
+    def get(self, request):
+        company = Company.objects.all()
+        affiliate_logger.info(f"Company page")
+        return render(request, self.template_name, context={'company': company})
+
+
+class NewsListView(View):
+    template_name = 'main/news.html'
+
+    def get(self, request):
+        news = Company.objects.all()
+        affiliate_logger.info(f"News page")
+        return render(request, self.template_name, context={'news': news})
+
+
 class VacnacyListView(View):
     template_name = 'main/vacancy.html'
 
@@ -89,6 +113,14 @@ class InsuranceListView(View):
         insurance = incurance_list()
         affiliate_logger.info(f"Insurance list page")
         return render(request, self.template_name, context={"insurance": insurance})
+
+class AffiliateListView(View):
+    template_name = 'main/affiliate_info.html'
+
+    def get(self, request):
+        affiliate = affiliate_list()
+        affiliate_logger.info(f"Affiliate list page")
+        return render(request, self.template_name, context={"affiliate": affiliate})
 
 
 @method_decorator(agent_required, name='dispatch')
@@ -124,6 +156,25 @@ class AgentContractsListView(View):
     def get(self, request, pk):
         contracts = get_client_contracts(pk)
         return render(request, self.template_name, {'contracts': contracts})
+    
+@method_decorator(agent_required, name='dispatch')
+class SearchContractsView(View):
+    model = Contract
+    template_search_name = "agent_actions/affiliate_contracts_searched.html"
+    template_name = 'agent_actions/affiliate_contracts.html'
+
+    def post(self, request, pk):
+        searched = request.POST["searched"]
+        if len(searched) != 0:
+            contracts = self.model.objects.filter(
+                Q(client__user__email__contains=searched) | 
+                Q(client__user__first_name__contains=searched),
+                is_completed=CREATED
+            )
+            return render(request, self.template_search_name, {"searched": searched, "contracts": contracts})
+        else:
+            return render(request, self.template_name, {})
+
 
 
 @method_decorator(client_required, name='dispatch')
@@ -137,6 +188,7 @@ class ClientContractListView(View):
         contracts = get_contracts(pk)
         affiliate_logger.info(f"Client contract list: {request.user}")
         return render(request, self.template_name, {'contracts': contracts})
+
 
 @method_decorator(client_required, name='dispatch')
 class ConfirmPolicyCreateView(View):
@@ -180,3 +232,18 @@ class StatisticsView(View):
                 'client_mean': client_mean,
                 'client_mode': client_mode
             })
+
+class CatFactView(View):
+    template_name = 'main/cat_fact.html'
+
+    def get(self, request):
+        cat_fact = get_cat_info()
+        return render(request, self.template_name, context={'cat_fact': cat_fact})
+
+class AgePredictionView(View):
+    template_name = 'main/age_prediction.html'
+
+    def get(self, request):
+        first_name = self.request.user.first_name
+        age = get_age(first_name)
+        return render(request, self.template_name, context={'age': age})
