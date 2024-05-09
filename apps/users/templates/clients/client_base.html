@@ -1,0 +1,77 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Hello, world!</title>
+  </head>
+<style>
+    .navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #000;
+    padding: 10px;
+}
+
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    width: 100%;
+    list-style-type: none;
+    padding: 0;
+}
+
+.navbar-nav li {
+    margin: 0 10px;
+}
+</style>
+  <body>
+    <nav class="navbar">
+      <a href="#">Company Name</a>
+      <button type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navbarNav">
+          <ul class="navbar-nav">
+            <li>
+                <a  href="{% url 'client_profile' user.id%}">Your Profile</a>
+              </li>
+            <li>
+              <a  href="{% url 'client_contracts' user.id%}">Your Contracts</a>
+            </li>
+            <li>
+              <a  href="{% url 'balance_create' user.id%}">Fill your balance</a>
+            </li>
+            <li>
+              <a href="{% url 'contract_create' user.id%}">Create Contract</a>
+            </li>
+            <li>
+              <a  href="{% url 'logout' %}">Logout</a>
+            </li>
+            <li>
+              <a href="{% url 'change_password' user.id%}">Change password</a>
+            </li>
+            <li>
+              <a href="{% url 'client_update' user.id%}">Update Data</a>
+            </li>
+            <li>
+              <a href="{% url 'feedback_create' user.id%}">Feedback Create</a>
+            </li>
+          </ul>
+      </div>
+  </nav>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6 box">
+            <h1>{% block header %}{% endblock header %}</h1>
+            <div>{% block content%}{% endblock content %}</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

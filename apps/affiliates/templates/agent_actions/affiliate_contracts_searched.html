@@ -1,15 +1,34 @@
-{% extends "agent_actions/affiliate_contracts.html" %}
-{% block title %}Searched contracts{% endblock title %}
-{% block header %}Searched contracts{% endblock header %}
+{% extends "agents/agent_base.html" %}
+{% block title %}Contracts{% endblock title %}
 
 {% block content %}
-  <h2>Your Contracts</h2>
-  {% for contract in contracts %}
-    <div>
-      <h3>{{ contract.insurance_type }}</h3>
-      <p>{{ contract.insurance_object }}</p>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" action="{% url 'search_contracts' user.id%}">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Search contracts" name="searched">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <ul>
+                    {% for item in contracts %}
+                        <p class="truncate">Client: {{ item.client.user }}</p>
+                        <p class="truncate">Affiliate: {{ item.affiliate }}</p>
+                        <p class="truncate">Insurance type: {{ item.insurance_type }}</p>
+                        <p class="truncate">Created at: {{ item.created_at }}</p>
+                        <p class="truncate">Insurance object: {{ item.insurance_object }}</p>
+                        {% for risk in item.insurance_risk.all %}
+                            <p class="truncate">Insurance risk: {{ risk }}</p>
+                        {% endfor %}
+                        <a href="{% url 'policy_create' item.id %}" class="btn btn-primary">Create Policy</a>
+                        <hr>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
-  {% empty %}
-    <p>No contracts found.</p>
-  {% endfor %}
-{% endblock %}
+{% endblock content %}
