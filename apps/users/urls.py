@@ -7,6 +7,7 @@ from .views import (
     ClientProfileView, 
     ClientRegistrationView,
     ContractAgentListView,
+    DeleteClientContractView,
     FeedbackCreateView,
     FillBalanceView, 
     LogoutView,
@@ -26,5 +27,7 @@ urlpatterns = [
     path('agent/update/<int:pk>', UpdateAgentProfileView.as_view(), name='agent_update'),
     path('agent/contracts/<int:pk>', ContractAgentListView.as_view(), name='agent_contracts'),
     path('client/feedbacks/create/<int:pk>', FeedbackCreateView.as_view(), name='feedback_create'),
-    path('client/balance/create/<int:pk>', FillBalanceView.as_view(), name='balance_create')
+    path('client/balance/create/<int:pk>', FillBalanceView.as_view(), name='balance_create'),
+    path('contract/delete/<int:pk>', DeleteClientContractView.as_view(), name='contract_delete')
+
 ] 

@@ -7,8 +7,10 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 
-from .constants import CLIENT, AGENT
+from django.http import HttpResponseRedirect, Http404
+from django.views.generic import DeleteView
 
+from apps.affiliates.models import Contract
 from .decorators import agent_required, client_required
 from django.utils.decorators import method_decorator
 from .models import Agent, Client, CustomUser, Feedback
@@ -36,7 +38,6 @@ user_logger = logging.getLogger('main')
 
 class ClientRegistrationView(View):
     template_name = 'auth/client_register.html'
-    model = Client
     form_class = ClientRegistrationForm
     success_url = reverse_lazy('login')
 
@@ -120,7 +121,6 @@ class LogoutView(View):
     
 
 class ChangePasswordView(View):
-    model = CustomUser
     template_name = 'auth/change_password.html'
     form_class = PasswordChangeForm
     success_url = reverse_lazy('login')
@@ -148,7 +148,6 @@ class ChangePasswordView(View):
 
 @method_decorator(client_required, name='dispatch')
 class UpdateClientProfileView(View):
-    model = Client
     form_class = ClientUpdateForm
     template_name = 'clients/client_data.html'
     success_url = 'client_profile'
@@ -171,7 +170,6 @@ class UpdateClientProfileView(View):
 
 @method_decorator(agent_required, name='dispatch')
 class UpdateAgentProfileView(View):
-    model = Agent
     form_class = AgentUpdateForm
     template_name = 'agents/agent_data.html'
     success_url = 'agent_profile'
@@ -194,13 +192,25 @@ class UpdateAgentProfileView(View):
 
 @method_decorator(agent_required, name='dispatch')
 class ContractAgentListView(View):
-    model = Agent
     template_name = 'agents/agent_contracts.html'
-    success_url = 'agent_profile'
 
     def get(self, request, pk):
         contracts = policy_agent_list(pk)  
         return render(request, self.template_name, context={'contracts': contracts})
+
+
+@method_decorator(client_required, name='dispatch')
+
+class DeleteClientContractView(View):
+
+    def get(self, request, pk):
+        contract = Contract.objects.get(id=pk)
+        return render(request, 'client_actions/delete_contract.html', {'contract': contract})
+
+    def post(self, request, pk):
+        contract = Contract.objects.get(id=pk)
+        contract.delete()
+        return redirect('client_contracts', request.user.id)
 
 
 @method_decorator(client_required, name='dispatch')
@@ -227,7 +237,6 @@ class FeedbackCreateView(View):
 
 @method_decorator(client_required, name='dispatch')
 class FillBalanceView(View):
-    model = Client
     form_class = BalanceForm
     template_name = 'clients/balance_create.html'
     success_url = 'client_profile'
@@ -241,7 +250,7 @@ class FillBalanceView(View):
         if form.is_valid():
             balance = balance_update(pk, form.data)
             if balance:
-                # user_logger.info(f"Client balance has been updated successfully: {request.user}")
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
         return render(request, self.template_name, {'form': form})
+    

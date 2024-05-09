@@ -7,7 +7,7 @@ from apps.users.models import Agent
 from apps.users.utils import get_object
 from .constants import CREATED
 
-from .utils import client_age_mean, client_age_median, client_age_mode, client_list, get_age, get_cat_info, plot_policy_sale, policy_comleted_list_price
+from .utils import client_age_mean, client_age_median, client_age_mode, client_list, get_age, get_cat_info, plot_policy_sale, policy_comleted_list_price, policy_month_sale
 from .decorators import agent_required, client_required
 from .models import Company, Contract, Policy
 from .forms import ContractForm, PolicyForm
@@ -34,7 +34,6 @@ affiliate_logger = logging.getLogger('affiliates')
 @method_decorator(client_required, name='dispatch')
 class ContractCreateView(View):
     template_name = 'client_actions/contract_create.html'
-    model = Contract
     form_class = ContractForm
     success_url = 'client_profile'
 
@@ -56,11 +55,9 @@ class ContractCreateView(View):
 @method_decorator(client_required, name='dispatch')
 class ClientPolicyDetail(View):
     template_name = 'client_actions/policy_detail.html'
-    model = Policy
 
     def get(self, request, pk):
         policy = get_client_policy(pk)
-        print(policy)
         affiliate_logger.info(f"Client policy detail")
         return render(request, self.template_name, context={'policy': policy})
 
@@ -126,7 +123,6 @@ class AffiliateListView(View):
 @method_decorator(agent_required, name='dispatch')
 class PolicyCreateView(View):
     template_name = 'agent_actions/policy_create.html'
-    model = Policy
     form_class = PolicyForm
     success_url = 'agent_profile'
 
@@ -149,7 +145,6 @@ class PolicyCreateView(View):
 @method_decorator(agent_required, name='dispatch')
 class AgentContractsListView(View):
     template_name = 'agent_actions/affiliate_contracts.html'
-    model = Contract
     form_class = ContractForm
     success_url = 'agent_profile'
 
@@ -157,9 +152,9 @@ class AgentContractsListView(View):
         contracts = get_client_contracts(pk)
         return render(request, self.template_name, {'contracts': contracts})
     
+    
 @method_decorator(agent_required, name='dispatch')
 class SearchContractsView(View):
-    model = Contract
     template_search_name = "agent_actions/affiliate_contracts_searched.html"
     template_name = 'agent_actions/affiliate_contracts.html'
 
@@ -180,7 +175,6 @@ class SearchContractsView(View):
 @method_decorator(client_required, name='dispatch')
 class ClientContractListView(View):
     template_name = 'client_actions/client_contracts.html'
-    model = Contract
     form_class = ContractForm
     success_url = 'client_profile'
 
@@ -222,6 +216,7 @@ class StatisticsView(View):
         client_mean = client_age_mean()
         client_mode = client_age_mode()
         plot_policy_sale()
+        policy_month_sale()
         return render(
             request, 
             self.template_name, 

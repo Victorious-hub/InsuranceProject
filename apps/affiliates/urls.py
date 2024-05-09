@@ -16,7 +16,7 @@ from .views import (
     StatisticsView, 
     VacnacyListView,
     AgePredictionView,
-    CatFactView
+    CatFactView,
 )
 
 
@@ -37,5 +37,4 @@ urlpatterns = [
     path('cat/fact', CatFactView.as_view(), name='cat_fact'),
     path('age/prediction', AgePredictionView.as_view(), name='age_predict'),
     path('contract/search/<int:pk>', SearchContractsView.as_view(), name='search_contracts'),
-
 ] 

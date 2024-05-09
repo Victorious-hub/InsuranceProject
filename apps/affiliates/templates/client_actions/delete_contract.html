@@ -1,0 +1,14 @@
+{% extends "clients/client_base.html" %}
+{% block title %}Client Profile{% endblock title %}
+
+{% block content %}
+  <h2>Delete Contract</h2>
+  <p>Are you sure you want to delete this contract?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+  </form>
+
+  <a href="{% url 'client_contracts' user.id %}">No, take me back</a>
+{% endblock %}

@@ -3,6 +3,8 @@ import os
 import requests
 from django.conf import settings
 import pandas as pd
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
 import matplotlib.pyplot as plt
 from apps.users.models import Client
 from .constants import COMPLETED
@@ -55,3 +57,34 @@ def plot_policy_sale():
     plt.savefig(os.path.join(settings.MEDIA_ROOT, 'total_policies_by_affiliate.png'))
 
     plt.close()
+
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+
+def policy_month_sale():
+    today = datetime.now()
+    policies = Policy.objects.all()
+
+    month_counts = {month: 0 for month in range(1, 13)}
+
+    for policy in policies:
+        created_month = policy.created_at.month
+        if created_month <= today.month:  # Consider only policies created this year
+            month_counts[created_month] += 1
+
+    month_labels = [str(month) for month in month_counts.keys()]
+    policy_counts = list(month_counts.values())
+
+    plt.figure(figsize=(10, 6))  
+    plt.bar(month_labels, policy_counts)
+    plt.xlabel("Month")
+    plt.ylabel("Number of Policies")
+    plt.title("Policies Created by Month (This Year)")
+    plt.xticks(rotation=45)  
+    plt.grid(axis='y', linestyle='--', alpha=0.7)  
+
+    plt.savefig(os.path.join(settings.MEDIA_ROOT, 'policy_month_sale.png'))
+
+    plt.close()
+
+    

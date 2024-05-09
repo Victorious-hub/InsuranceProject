@@ -15,6 +15,7 @@
                                 <li>{{ contract.created_at }}</li>
                                 <li>{{ contract.insurance_object }}</li>
                             </ul>
+                            <a href="{% url 'contract_delete' contract.id %}"btn btn-primary">Delete contract</a>
                         </div>
                     </div>
                 {% endif %}
