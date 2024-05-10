@@ -1,6 +1,14 @@
 from apps.users.models import Affiliate, Agent, Client
 from apps.users.utils import get_object
-from .constants import CAR, COMPLETED, CONFIRMED, CREATED, HOUSE, INSURANCE, MEDICAL
+from .constants import (
+    CAR, 
+    COMPLETED, 
+    CONFIRMED, 
+    CREATED, 
+    HOUSE, 
+    MEDICAL
+)
+
 from .models import (
     Contract,
     Coupon, 

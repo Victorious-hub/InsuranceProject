@@ -1,0 +1,12 @@
+
+{% extends "main/base.html" %}
+{% block title %}Questions{% endblock title %}
+
+{% block content %}
+    {% for item in answer %}
+        <h2>Question</h2>
+        <p>{{ item.question.text }}</p>
+        <h2>Answer</h2>
+        <p>{{ item.text }}</p>
+    {% endfor %}
+{% endblock content %}

@@ -7,11 +7,13 @@ from .views import (
     ClientContractListView,
     ClientPolicyDetail,
     ConfirmPolicyCreateView, 
-    ContractCreateView, 
+    ContractCreateView,
+    CouponListView, 
     FeedbackListView, 
     InsuranceListView,
     NewsListView,
     PolicyCreateView,
+    QuestionAnswerListView,
     SearchContractsView,
     StatisticsView, 
     VacnacyListView,
@@ -37,4 +39,6 @@ urlpatterns = [
     path('cat/fact', CatFactView.as_view(), name='cat_fact'),
     path('age/prediction', AgePredictionView.as_view(), name='age_predict'),
     path('contract/search/<int:pk>', SearchContractsView.as_view(), name='search_contracts'),
+    path('coupons/', CouponListView.as_view(), name='coupon_list'),
+    path('question/answers/', QuestionAnswerListView.as_view(), name='question_answer_list')
 ] 

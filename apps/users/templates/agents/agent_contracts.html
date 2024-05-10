@@ -1,13 +1,12 @@
 {% extends "agents/agent_base.html" %}
 {% block title %}Agent contracts{% endblock title %}
-{% block header %}Agent contracts{{% endblock header %}
+{% block header %}Agent contracts{% endblock header %}
 
 {% block content %}
     <ul>
         {% for item in contracts %}
-            <p class="truncate">Client: {{ item.client }}</p>
-            <p class="truncate">Affiliate: {{ item.affiliate }}</p>
-            <p class="truncate">Insurance type: {{ item.insurance_type }}</p>
+            <p class="truncate">Client: {{ item.contract.client }}</p>
+            <p class="truncate">Insurance type: {{ item.contract.insurance_type }}</p>
             <p class="truncate">Insurance sum: {{ item.insurance_sum }}</p>
             <p class="truncate">Start date: {{ item.start_date }}</p>
             <p class="truncate">End_date: {{ item.end_date }}</p>

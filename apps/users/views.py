@@ -7,13 +7,10 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 
-from django.http import HttpResponseRedirect, Http404
-from django.views.generic import DeleteView
-
 from apps.affiliates.models import Contract
 from .decorators import agent_required, client_required
 from django.utils.decorators import method_decorator
-from .models import Agent, Client, CustomUser, Feedback
+from .models import Feedback
 
 from .forms import (
     AgentUpdateForm, 
@@ -116,7 +113,7 @@ class LogoutView(View):
 
     def get(self, request):
         logout(request)
-        user_logger.error(f"Logout user: {request.user}")
+        user_logger.warning(f"Logout user: {request.user}")
         return redirect(self.success_url)
     
 

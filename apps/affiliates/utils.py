@@ -3,8 +3,6 @@ import os
 import requests
 from django.conf import settings
 import pandas as pd
-from django.db.models import Count
-from django.db.models.functions import TruncMonth
 import matplotlib.pyplot as plt
 from apps.users.models import Client
 from .constants import COMPLETED

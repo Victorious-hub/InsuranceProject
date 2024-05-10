@@ -2,14 +2,10 @@ import logging
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
-
-from apps.users.models import Agent
-from apps.users.utils import get_object
 from .constants import CREATED
 
-from .utils import client_age_mean, client_age_median, client_age_mode, client_list, get_age, get_cat_info, plot_policy_sale, policy_comleted_list_price, policy_month_sale
 from .decorators import agent_required, client_required
-from .models import Company, Contract, Policy
+from .models import Answer, Company, Contract, Coupon, News
 from .forms import ContractForm, PolicyForm
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
@@ -27,7 +23,24 @@ from .selectors import (
     vacancy_list
 )
 
-from .services import apply_coupon_and_pay, contract_create, policy_create
+from .utils import (
+    client_age_mean, 
+    client_age_median, 
+    client_age_mode, 
+    client_list, 
+    get_age, 
+    get_cat_info, 
+    plot_policy_sale, 
+    policy_comleted_list_price, 
+    policy_month_sale
+)
+
+
+from .services import (
+    apply_coupon_and_pay, 
+    contract_create, 
+    policy_create
+)
 
 affiliate_logger = logging.getLogger('affiliates')
 
@@ -75,12 +88,29 @@ class CompanyDetailView(View):
         affiliate_logger.info(f"Company page")
         return render(request, self.template_name, context={'company': company})
 
+class CouponListView(View):
+    template_name = 'main/coupons.html'
+
+    def get(self, request):
+        coupon = Coupon.objects.filter(active=True)
+        affiliate_logger.info(f"Coupon page")
+        return render(request, self.template_name, context={'coupon': coupon})
+
+
+class QuestionAnswerListView(View):
+    template_name = 'main/question_answer.html'
+
+    def get(self, request):
+        answer = Answer.objects.all()
+        affiliate_logger.info(f"Answer page")
+        return render(request, self.template_name, context={'answer': answer})
+
 
 class NewsListView(View):
     template_name = 'main/news.html'
 
     def get(self, request):
-        news = Company.objects.all()
+        news = News.objects.all()
         affiliate_logger.info(f"News page")
         return render(request, self.template_name, context={'news': news})
 
@@ -155,6 +185,7 @@ class AgentContractsListView(View):
     
 @method_decorator(agent_required, name='dispatch')
 class SearchContractsView(View):
+    model = Contract
     template_search_name = "agent_actions/affiliate_contracts_searched.html"
     template_name = 'agent_actions/affiliate_contracts.html'
 
@@ -163,7 +194,8 @@ class SearchContractsView(View):
         if len(searched) != 0:
             contracts = self.model.objects.filter(
                 Q(client__user__email__contains=searched) | 
-                Q(client__user__first_name__contains=searched),
+                Q(client__user__first_name__contains=searched) | 
+                Q(client__user__last_name__contains=searched),
                 is_completed=CREATED
             )
             return render(request, self.template_search_name, {"searched": searched, "contracts": contracts})

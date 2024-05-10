@@ -52,7 +52,7 @@ class Answer(models.Model):
 
     class Meta:
         verbose_name = "answer"
-        verbose_name_plural = "answeries"
+        verbose_name_plural = "answers"
 
     def __str__(self):
         return f"Answer: {self.text}"

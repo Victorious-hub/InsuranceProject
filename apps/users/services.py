@@ -1,7 +1,6 @@
 
 from .constants import AGENT, CLIENT
 from .utils import get_object
-from django.contrib.auth.models import Group
 from .models import Agent, Client, CustomUser, Feedback
 from django.contrib.auth.hashers import make_password
 

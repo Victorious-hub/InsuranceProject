@@ -1,6 +1,20 @@
 from django.contrib import admin
 
-from .models import Coupon, InsuranceType, InsuranceObject, InsuranceRisk, Contract, Policy, Agent
+from .models import (
+    Answer, 
+    Contacts, 
+    Coupon, 
+    InsuranceType, 
+    InsuranceObject, 
+    InsuranceRisk, 
+    Contract, 
+    News, 
+    Policy, 
+    Agent, 
+    PrivacyPolicy, 
+    Question, 
+    Vacancy
+)
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
@@ -23,6 +37,31 @@ class CouponAdmin(admin.ModelAdmin):
     list_filter = ('code', 'active',)
     empty_value_display = "undefined"
 
-admin.register(InsuranceObject)
-admin.register(InsuranceRisk)
-admin.register(InsuranceType)
+@admin.register(News)
+class NewsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'content',)
+    list_display_links = ('title',)
+    list_filter = ('title', 'content',)
+    empty_value_display = "undefined"
+
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'text',)
+    list_display_links = ('text',)
+    list_filter = ('text',)
+    empty_value_display = "undefined"
+
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('id', 'text', 'question',)
+    list_display_links = ('text',)
+    list_filter = ('text', 'question',)
+    empty_value_display = "undefined"
+
+admin.site.register(InsuranceObject)
+admin.site.register(InsuranceRisk)
+admin.site.register(InsuranceType)
+
+admin.site.register(PrivacyPolicy)
+admin.site.register(Contacts)
+admin.site.register(Vacancy)

@@ -1,0 +1,13 @@
+{% extends "main/base.html" %}
+{% block title %}Coupons {% endblock title %}
+
+{% block content %}
+    <ul>
+        {% for item in coupon %}
+            <p class="truncate">Code: {{ item.code}}</p>
+            <p class="truncate">Discount: {{ item.discount }}</p>
+            <hr>
+        {% endfor %}
+    </ul>
+{% endblock content %}
+
