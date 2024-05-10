@@ -44,6 +44,7 @@ class ClientRegistrationView(View):
 
     def post(self, request):
         form = self.form_class(request.POST)
+        print(form.data.get('birth_date'))
         if form.is_valid():
             client_register(form.data)
             user_logger.info(f"Register user: {form.data.get('first_name')}-{form.data.get('last_name')}")
@@ -78,12 +79,9 @@ class AuthenticateView(View):
                 login(request, user)
                 user_logger.info(f"Register user: {self.request.user}")
                 return redirect(self.success_url)
-        else:
-            user_logger.error(f"Failed to login user: {form.data.get('first_name')}-{form.data.get('last_name')}")
-            for _, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{error}')
-                    
+            else:
+                user_logger.error(f"Failed to login user: {form.data.get('first_name')}-{form.data.get('last_name')}")
+                messages.error(request, "Email of password incorrect")           
         return render(request, self.template_name, {'form': form})
 
 
@@ -197,7 +195,6 @@ class ContractAgentListView(View):
 
 
 @method_decorator(client_required, name='dispatch')
-
 class DeleteClientContractView(View):
 
     def get(self, request, pk):
@@ -249,5 +246,9 @@ class FillBalanceView(View):
             if balance:
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
+        else:
+            for _, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
         return render(request, self.template_name, {'form': form})
     

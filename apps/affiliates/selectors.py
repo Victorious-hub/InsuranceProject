@@ -5,7 +5,7 @@ from .models import Contract, InsuranceType, News, Policy, Vacancy
 from django.db.models import Q
 
 def vacancy_list() -> Vacancy:
-    obj = Vacancy.objects.all().values('title', 'description', 'created_at')
+    obj = Vacancy.objects.all()
     return obj
 
 def feedback_list() -> Feedback:
@@ -32,8 +32,7 @@ def get_client_contracts(pk: int) -> Contract:
     return contracts
 
 def get_contracts(pk: int) -> Contract:
-    client = get_object(Client, user__id = pk)
-    contracts = Contract.objects.filter(client=client)
+    contracts = Contract.objects.filter(client__user__id=pk)
     return contracts
 
 def get_client_contract(pk: int) -> Contract:

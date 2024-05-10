@@ -26,7 +26,7 @@ class Company(models.Model):
 
 
 class Contacts(models.Model):
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
+    agent = models.ForeignKey(Agent, on_delete=models.DO_NOTHING)
     description =  models.TextField()
 
     class Meta:
@@ -108,11 +108,11 @@ class InsuranceRisk(models.Model):
 
 
 class Contract(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    affiliate = models.ForeignKey(Affiliate, on_delete=models.CASCADE)
-    insurance_type = models.ForeignKey(InsuranceType, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
+    affiliate = models.ForeignKey(Affiliate, on_delete=models.DO_NOTHING)
+    insurance_type = models.ForeignKey(InsuranceType, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
-    insurance_object = models.ForeignKey(InsuranceObject, on_delete=models.CASCADE)
+    insurance_object = models.ForeignKey(InsuranceObject, on_delete=models.DO_NOTHING)
     insurance_risk = models.ManyToManyField(InsuranceRisk)
     is_completed = models.PositiveSmallIntegerField(max_length=20, choices=CONTRACTS)
 
@@ -126,8 +126,8 @@ class Contract(models.Model):
 
 
 class Policy(BaseModel):
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    agent = models.ForeignKey(Agent, on_delete=models.DO_NOTHING)
+    contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING)
     insurance_sum = models.FloatField(default=0)
     price = models.FloatField(default=0)
     start_date = models.DateField()

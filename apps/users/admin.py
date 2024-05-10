@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import Agent, Client, CustomUser
+from .models import Affiliate, Agent, Client, CustomUser
 
 
 @admin.register(CustomUser)
 class CustomAccountAdmin(admin.ModelAdmin):
     list_display = ('id', 'email', 'first_name', 'last_name',
-                    'role', 'is_active', 'is_staff', 'created_at', 'updated_at',
+                    'is_client', 'is_active', 'is_staff', 'created_at', 'updated_at',
                     )
     search_fields = ('first_name', 'email',)
     list_editable = ('is_active', 'is_staff', 'first_name', 'last_name',)
@@ -30,3 +30,5 @@ class AgentAdmin(admin.ModelAdmin):
 
     list_filter = ('user',)
     empty_value_display = "undefined"
+
+admin.site.register(Affiliate)

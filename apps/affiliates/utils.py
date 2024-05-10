@@ -10,7 +10,8 @@ from .models import Policy
 from django.db.models import Sum
 from statistics import median, mean, mode
 from django.db.models import Q
-
+from datetime import datetime
+import matplotlib.pyplot as plt
 
 def client_list()->Client:
     obj = Client.objects.all().order_by('user__first_name')
@@ -56,8 +57,6 @@ def plot_policy_sale():
 
     plt.close()
 
-from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
 
 def policy_month_sale():
     today = datetime.now()

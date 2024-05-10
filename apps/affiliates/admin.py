@@ -18,9 +18,9 @@ from .models import (
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'affiliate', 'insurance_type', 'insurance_object', 'is_completed',)
+    list_display = ('id', 'client', 'affiliate', 'insurance_type', 'insurance_object',)
     list_display_links = ('client',)
-    list_filter = ('client', 'affiliate', 'insurance_type', 'insurance_object', 'insurance_risk', 'is_completed',)
+    list_filter = ('client', 'affiliate', 'insurance_type', 'insurance_object', 'insurance_risk',)
     empty_value_display = "undefined"
 
 @admin.register(Policy)

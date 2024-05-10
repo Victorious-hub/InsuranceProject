@@ -4,59 +4,64 @@
 {% block content %}
     <div class="kanban">
         <div class="kanban-column">
-            <h2>Not Confirmed</h2>
-            {% for contract in contracts %}
-                {% if contract.is_completed == 1 %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <ul>
-                                <li>{{ contract.client }}</li>
-                                <li>{{ contract.affiliate }}</li>
-                                <li>{{ contract.created_at }}</li>
-                                <li>{{ contract.insurance_object }}</li>
-                            </ul>
-                            <a href="{% url 'contract_delete' contract.id %}"btn btn-primary">Delete contract</a>
+            {% if contracts %}
+                <h2>Not Confirmed</h2>
+                {% for contract in contracts %}
+                    {% if contract.is_completed == 1 %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <ul>
+                                    <li>{{ contract.client }}</li>
+                                    <li>{{ contract.affiliate }}</li>
+                                    <li>{{ contract.created_at }}</li>
+                                    <li>{{ contract.insurance_object }}</li>
+                                </ul>
+                                <a href="{% url 'contract_delete' contract.id %}"btn btn-primary">Delete contract</a>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-        <div class="kanban-column">
-            <h2>Confirmed</h2>
-            {% for contract in contracts %}
-                {% if contract.is_completed == 2 %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <ul>
-                                <li>{{ contract.client }}</li>
-                                <li>{{ contract.affiliate }}</li>
-                                <li>{{ contract.created_at }}</li>
-                                <li>{{ contract.insurance_object }}</li>
-                            </ul>
-                            <a href="{% url 'client_policy' contract.id %}"btn btn-primary">Pay</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="kanban-column">
+                <h2>Confirmed</h2>
+                {% for contract in contracts %}
+                    {% if contract.is_completed == 2 %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <ul>
+                                    <li>{{ contract.client }}</li>
+                                    <li>{{ contract.affiliate }}</li>
+                                    <li>{{ contract.created_at }}</li>
+                                    <li>{{ contract.insurance_object }}</li>
+                                </ul>
+                                <a href="{% url 'client_policy' contract.id %}"btn btn-primary">Pay</a>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
 
-        <div class="kanban-column">
-            <h2>Completed</h2>
-            {% for contract in contracts %}
-                {% if contract.is_completed == 3 %}
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <ul>
-                                <li>{{ contract.client }}</li>
-                                <li>{{ contract.affiliate }}</li>
-                                <li>{{ contract.created_at }}</li>
-                                <li>{{ contract.insurance_object }}</li>
-                            </ul>  
-                            <a href="{% url 'client_policy_detail' contract.id %}"btn btn-primary">Detail</a>
+            <div class="kanban-column">
+                <h2>Completed</h2>
+                {% for contract in contracts %}
+                    {% if contract.is_completed == 3 %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <ul>
+                                    <li>{{ contract.client }}</li>
+                                    <li>{{ contract.affiliate }}</li>
+                                    <li>{{ contract.created_at }}</li>
+                                    <li>{{ contract.insurance_object }}</li>
+                                </ul>  
+                                <a href="{% url 'client_policy_detail' contract.id %}"btn btn-primary">Detail</a>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            
+            {%else%}
+                <h1>You don't have any contracts yet</h1>
+            {% endif %}
         </div>
     </div>
 {% endblock content %}

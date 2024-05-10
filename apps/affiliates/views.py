@@ -65,6 +65,27 @@ class ContractCreateView(View):
         return render(request, self.template_name, {'form': form})
 
 
+# @method_decorator(client_required, name='dispatch')
+# class ContractSignView(View):
+#     template_name = 'client_actions/contract_sign.html'
+#     form_class = ContractForm
+#     success_url = 'client_profile'
+
+#     def get(self, request, pk):
+#         form = self.form_class()
+#         return render(request, self.template_name, {'form': form})
+
+#     def post(self, request, pk):
+#         form = self.form_class(request.POST)
+#         if form.is_valid():
+#             contract = contract_create(pk, form.data)
+#             if contract:
+#                 affiliate_logger.info(f"Created contract for client: {form.data.get('client')}")
+#                 client_profile_url = reverse(self.success_url, kwargs={'pk': pk})
+#                 return redirect(client_profile_url)
+#         return render(request, self.template_name, {'form': form})
+
+
 @method_decorator(client_required, name='dispatch')
 class ClientPolicyDetail(View):
     template_name = 'client_actions/policy_detail.html'
@@ -212,8 +233,11 @@ class ClientContractListView(View):
 
     def get(self, request, pk):
         contracts = get_contracts(pk)
-        affiliate_logger.info(f"Client contract list: {request.user}")
-        return render(request, self.template_name, {'contracts': contracts})
+        try:
+            affiliate_logger.info(f"Client contract list: {request.user}")
+            return render(request, self.template_name, {'contracts': contracts})
+        except Exception:
+           return render(request, self.template_name)
 
 
 @method_decorator(client_required, name='dispatch')

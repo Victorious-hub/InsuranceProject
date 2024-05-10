@@ -14,17 +14,21 @@
           </div>
       {% endif %}
       <form method="POST" action="{% url 'balance_create' user.id%}">
-          {% csrf_token %}
-          <h1>Fill your balance</h1>
-          {% for field in form %}
-              <div class="form-group">
-                  {{ field.label_tag }}
-                  {{ field }}
-              </div>
-          {% endfor %}
-          <input class="btn btn-success" type="submit" value="Submit" />
-      </form>
-  
+        {% csrf_token %}
+        <h1>Create Account</h1>
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="invalid-data d-inline-block ml-2">
+                        {{ field.errors|first }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <input class="btn btn-success" type="submit" value="Submit" />
+    </form>
     </div>
   </div>
 {% endblock content %}

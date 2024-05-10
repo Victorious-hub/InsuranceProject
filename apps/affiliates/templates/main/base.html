@@ -162,11 +162,11 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        {% if request.user.is_authenticated and request.user.role == 1 %}
+                        {% if request.user.is_authenticated and request.user.is_client == True %}
                             <li>
                                 <a href="{% url 'client_profile' user.id%}">Client Profile</a>
                             </li>
-                        {% elif request.user.is_authenticated and request.user.role == 2 %}
+                        {% elif request.user.is_authenticated and request.user.is_staff == True and request.user.is_superuser != True%}
                             <li>
                                 <a href="{% url 'agent_profile' user.id%}">Agent Profile</a>
                             </li>

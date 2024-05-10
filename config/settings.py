@@ -9,7 +9,7 @@ environ.Env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY', default='unsafe-secret-key')
+SECRET_KEY = "django-insecure-t$if7u3$amts9&=q-dbvmk%p@g0$hyz3)+2-fzpy6vi@1a()-z"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

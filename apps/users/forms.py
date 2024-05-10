@@ -1,23 +1,26 @@
 
 from django import forms
-
+from django.forms import ValidationError
+from django.forms import DateInput
 from .mixins import ValidationMixin
 from .models import Agent, Client, CustomUser, Feedback
 
 
-class RegistrationForm(forms.ModelForm):
+class RegistrationForm(forms.ModelForm, ValidationMixin):
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name',)
-
-
+        fields = ('email', 'first_name', 'last_name','date_birth')
+        widgets = {
+            'date_birth': DateInput(attrs={'type': 'date'}),
+        }
+    
 
 class UpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
         model = CustomUser
-        fields = ('first_name', 'last_name', 'gender', 'age', 'profile_image',)
-
+        fields = ('first_name', 'last_name', 'gender', 'profile_image')
  
+
 class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -31,10 +34,11 @@ class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
         self.fields.update(RegistrationForm().fields)
         self.order_fields(['email', 'first_name', 'last_name', 'password1', 'password2'])
 
-
     def clean(self):
         self.check_email(self.cleaned_data.get('email'))
         self.check_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
+        self.check_password_length(self.cleaned_data.get('password1'))
+        self.check_age(self.cleaned_data.get('date_birth'))
 
     
 class AgentRegistrationForm(forms.ModelForm, ValidationMixin):
@@ -70,6 +74,7 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = '__all__'
+        
 
 class ClientUpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
@@ -86,13 +91,8 @@ class ClientUpdateForm(forms.ModelForm, ValidationMixin):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'gender': user.gender,
-                'age': user.age
             })
         
-
-    def clean(self):
-        self.check_age(self.cleaned_data.get('age'))
-
 
 class AgentUpdateForm(forms.ModelForm, ValidationMixin):
     class Meta:
@@ -109,7 +109,6 @@ class AgentUpdateForm(forms.ModelForm, ValidationMixin):
                 'first_name': user.first_name,
                 'last_name': user.last_name,
                 'gender': user.gender,
-                'age': user.age
             })
             
 
@@ -123,3 +122,10 @@ class BalanceForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ('balance',)
+    
+    def clean(self):
+        if self.cleaned_data.get('balance') < 0:
+            raise ValidationError("Balance must be > 0")
+        else:
+            return self.cleaned_data.get('balance')
+

@@ -1,9 +1,8 @@
 
-from .constants import AGENT, CLIENT
 from .utils import get_object
 from .models import Agent, Client, CustomUser, Feedback
 from django.contrib.auth.hashers import make_password
-
+from datetime import datetime
 
 def client_register(data) -> Client:
     user = CustomUser(
@@ -11,9 +10,8 @@ def client_register(data) -> Client:
         last_name=data.get('last_name'),
         email=data.get('email'),
         password = make_password(data.get('password1')),
-        gender=data.get('gender'),
-        age=data.get('age'),
-        role=CLIENT
+        date_birth = datetime.strptime(data.get('date_birth'), "%dd-%mm-%yyyy"),
+        is_client=True
     )
     user.save()
     client = Client(
@@ -31,8 +29,7 @@ def agent_register(data) -> Client:
         email=data.get('email'),
         is_staff = True,
         password = make_password(data.get('password1')),
-        age=data.get('age'),
-        role=AGENT
+        date_birth=data.get('date_birth')
     )
     user.save()
     client = Agent(
@@ -50,7 +47,8 @@ def client_update(pk: int, data, profile_image) -> Client:
     client.user.first_name = data.get('first_name')
     client.user.last_name = data.get('last_name')
     client.user.age = data.get('age')
-    client.user.profile_image = profile_image
+    if profile_image:
+        client.user.profile_image = profile_image
 
     client.user.save()
     client.save()
@@ -61,8 +59,8 @@ def agent_update(pk: int, data, profile_image) -> Agent:
     agent.user.gender = data.get('gender')
     agent.user.first_name = data.get('first_name')
     agent.user.last_name = data.get('last_name')
-    agent.user.age = data.get('age')
-    agent.user.profile_image = profile_image
+    if profile_image:
+        agent.user.profile_image = profile_image
     
     agent.user.save()
     agent.save()
