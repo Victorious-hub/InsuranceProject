@@ -234,6 +234,7 @@ class SearchContractsView(View):
                 Q(client__user__email__contains=searched) | 
                 Q(client__user__first_name__contains=searched) | 
                 Q(client__user__last_name__contains=searched),
+                status=2
             )
             return render(request, self.template_search_name, {"searched": searched, "contracts": contracts})
         else:

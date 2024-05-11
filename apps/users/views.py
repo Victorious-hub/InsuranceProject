@@ -7,7 +7,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 
-from apps.affiliates.models import Contract
+from .utils import get_user_time
 from .decorators import agent_required, client_required
 from django.utils.decorators import method_decorator
 from .models import Feedback
@@ -92,8 +92,17 @@ class ClientProfileView(View):
     
     def get(self, request, pk):
         client = client_get(pk)
+        user_time_data = get_user_time()
+        user_timezone = user_time_data["user_timezone"]
+        current_date_formatted = user_time_data["current_date_formatted"]
+        calendar_text = user_time_data["calendar_text"]
         user_logger.info(f"Client data: {client.user.first_name}-{client.user.last_name}")
-        return render(request, self.template_name, context={'client': client})
+        return render(request, self.template_name, context={
+            'client': client, 
+            'user_timezone': user_timezone,
+            'current_date_formatted': current_date_formatted,
+            'calendar_text': calendar_text
+        })
     
 
 @method_decorator(agent_required, name='dispatch')
@@ -102,9 +111,17 @@ class AgentProfileView(View):
     
     def get(self, request, pk):
         agent = agent_get(pk)
+        user_time_data = get_user_time()
+        user_timezone = user_time_data["user_timezone"]
+        current_date_formatted = user_time_data["current_date_formatted"]
+        calendar_text = user_time_data["calendar_text"]
         user_logger.info(f"Client data: {agent.user.first_name}-{agent.user.last_name}")
-        return render(request, self.template_name, context={'agent': agent})
-
+        return render(request, self.template_name, context={
+            'agent': agent,
+            'user_timezone': user_timezone,
+            'current_date_formatted': current_date_formatted,
+            'calendar_text': calendar_text
+        })
 
 class LogoutView(View):
     success_url = reverse_lazy('login')

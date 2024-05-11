@@ -16,7 +16,11 @@
         <li>Affiliate name: {{ agent.affiliate.name }}</li>
         <li>Affiliate address: {{ agent.affiliate.address }}</li>
         <li>Affiliate phone: {{ agent.affiliate.phone }}</li>
-    </ul>
+
+        <p>Current timezone: {{user_timezone}}</p>
+        <p>Current date: {{current_date_formatted}}</p>
+        <p>Calendar?: {{calendar_text}}</p>
+  </ul> 
   </form>
 {% endblock content %}
 
