@@ -1,4 +1,6 @@
 from django.urls import path
+from django.urls import re_path
+
 
 from .views import (
     AffiliateListView,
@@ -6,9 +8,14 @@ from .views import (
     BaseView,
     ClientContractListView,
     ClientPolicyDetail,
+    CompanyPolicyChartDetailView,
+   #  CompanyPolicyMonthChartDetailView,
+    CompanyStatisticsView,
     ConfirmPolicyCreateView, 
     ContractCreateView,
-    CouponListView, 
+    ContractSignView,
+    CouponListView,
+    DeleteClientContractView, 
     FeedbackListView, 
     InsuranceListView,
     NewsListView,
@@ -34,11 +41,16 @@ urlpatterns = [
     path('feedbacks/', FeedbackListView.as_view(), name='feedback_list'),
     path('insurance/', InsuranceListView.as_view(), name='insurance_list'),
     path('agent/client/contracts/<int:pk>', AgentContractsListView.as_view(), name='client_contract_list'),
-    path('admin/statisctics/<int:pk>', StatisticsView.as_view(), name='stat'),
     path('client/policy/detail/<int:pk>', ClientPolicyDetail.as_view(), name='client_policy_detail'),
     path('cat/fact', CatFactView.as_view(), name='cat_fact'),
     path('age/prediction', AgePredictionView.as_view(), name='age_predict'),
     path('contract/search/<int:pk>', SearchContractsView.as_view(), name='search_contracts'),
     path('coupons/', CouponListView.as_view(), name='coupon_list'),
-    path('question/answers/', QuestionAnswerListView.as_view(), name='question_answer_list')
+    path('question/answers/', QuestionAnswerListView.as_view(), name='question_answer_list'),
+    path('contract/delete/<int:pk>', DeleteClientContractView.as_view(), name='contract_delete'),
+    path('contract/sign/<int:pk>', ContractSignView.as_view(), name='contract_sign'),
+    path('statisctics/<int:pk>', StatisticsView.as_view(), name='stat'),
+    re_path(r'^statisctics/company/(?P<pk>\d+)$', CompanyStatisticsView.as_view(), name='company_statisctics'),
+    path('statisctics/chart/<int:pk>', CompanyPolicyChartDetailView.as_view(), name='chart_statisctics'),
+    # path('statistics/month/sales/<int:pk>', CompanyPolicyMonthChartDetailView.as_view(), name='month_sales'),
 ] 

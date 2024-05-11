@@ -41,23 +41,6 @@ class ClientRegistrationForm(forms.ModelForm, ValidationMixin):
         self.check_age(self.cleaned_data.get('date_birth'))
 
     
-class AgentRegistrationForm(forms.ModelForm, ValidationMixin):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
-
-    class Meta:
-        model = Agent
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields.update(RegistrationForm().fields)
-    
-    def clean(self):
-        self.check_email(self.cleaned_data.get('email'))
-        self.check_passwords(self.cleaned_data.get('password1'), self.cleaned_data.get('password2'))
-
-
 class LoginForm(forms.Form):
     class Meta:
         model = CustomUser
@@ -116,6 +99,7 @@ class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
         exclude = ('client',)
+    
 
             
 class BalanceForm(forms.ModelForm):
@@ -124,8 +108,7 @@ class BalanceForm(forms.ModelForm):
         fields = ('balance',)
     
     def clean(self):
-        if self.cleaned_data.get('balance') < 0:
+        if self.cleaned_data.get('balance') < 0.:
             raise ValidationError("Balance must be > 0")
-        else:
-            return self.cleaned_data.get('balance')
+        return self.cleaned_data
 

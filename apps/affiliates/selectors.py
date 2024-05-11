@@ -1,8 +1,11 @@
-from apps.users.models import Affiliate, Agent, Client, Feedback
+from apps.users.models import Affiliate, Agent, Feedback
 from apps.users.utils import get_object
-from .constants import CREATED
 from .models import Contract, InsuranceType, News, Policy, Vacancy
 from django.db.models import Q
+CREATED = 1
+SIGNED = 2
+CONFIRMED = 3
+COMPLETED = 4
 
 def vacancy_list() -> Vacancy:
     obj = Vacancy.objects.all()
@@ -28,7 +31,7 @@ def get_client_contracts(pk: int) -> Contract:
     agent: Agent = get_object(Agent, user__id=pk)
     contracts: Contract = Contract.objects.filter(
         Q(affiliate=agent.affiliate) & 
-        Q(is_completed=CREATED)).order_by('client__user__email')
+        Q(status=SIGNED)).order_by('client__user__email')
     return contracts
 
 def get_contracts(pk: int) -> Contract:

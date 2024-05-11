@@ -195,19 +195,6 @@ class ContractAgentListView(View):
 
 
 @method_decorator(client_required, name='dispatch')
-class DeleteClientContractView(View):
-
-    def get(self, request, pk):
-        contract = Contract.objects.get(id=pk)
-        return render(request, 'client_actions/delete_contract.html', {'contract': contract})
-
-    def post(self, request, pk):
-        contract = Contract.objects.get(id=pk)
-        contract.delete()
-        return redirect('client_contracts', request.user.id)
-
-
-@method_decorator(client_required, name='dispatch')
 class FeedbackCreateView(View):
     model = Feedback
     form_class = FeedbackForm
@@ -226,6 +213,10 @@ class FeedbackCreateView(View):
                 # user_logger.info(f"Client feedback: {request.user}")
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)
+        else:
+            for _, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
         return render(request, self.template_name, {'form': form})
     
 
@@ -242,7 +233,7 @@ class FillBalanceView(View):
     def post(self, request, pk):
         form = self.form_class(request.POST)
         if form.is_valid():
-            balance = balance_update(pk, form.data)
+            balance = balance_update(pk, form.data.get('balance'))
             if balance:
                 client_profile_url = reverse(self.success_url, kwargs={'pk': request.user.id})
                 return redirect(client_profile_url)

@@ -1,13 +1,5 @@
 from apps.users.models import Affiliate, Agent, Client
 from apps.users.utils import get_object
-from .constants import (
-    CAR, 
-    COMPLETED, 
-    CONFIRMED, 
-    CREATED, 
-    HOUSE, 
-    MEDICAL
-)
 
 from .models import (
     Contract,
@@ -17,6 +9,9 @@ from .models import (
     InsuranceType, 
     Policy
 )
+CREATED = 1
+CONFIRMED = 3
+COMPLETED = 4
 
 def contract_create(pk: int, data) -> Contract:
     affiliate = get_object(Affiliate, id=data.get('affiliate'))
@@ -27,7 +22,7 @@ def contract_create(pk: int, data) -> Contract:
         insurance_type=insurance_type,
         insurance_object=insurance_object,
         affiliate=affiliate,
-        is_completed=CREATED
+        status=CREATED
     )
 
     for insurance_risks in data.get('insurance_risk'):
@@ -43,7 +38,7 @@ def contract_create(pk: int, data) -> Contract:
 def policy_create(pk: int, data) -> Policy:
     agent: Agent = get_object(Agent, user__id=pk)
     contract: Contract = get_object(Contract, id=data.get('contract'))
-    contract.is_completed = CONFIRMED
+    contract.status=CONFIRMED
     contract.save()
     obj = Policy.objects.create(
         agent=agent,
@@ -54,13 +49,7 @@ def policy_create(pk: int, data) -> Policy:
         price=data.get('price')
     )
 
-    match contract.insurance_type.type:
-        case 1:
-            agent.salary += (MEDICAL/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
-        case 2:
-            agent.salary += (HOUSE/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
-        case 3:
-            agent.salary += (CAR/100) * (float(obj.insurance_sum) * float(agent.tariff_rate/100))
+    agent.salary += contract.insurance_type.type/100 * float(obj.insurance_sum) * float(agent.tariff_rate)
 
     agent.save()
     obj.full_clean()
@@ -79,7 +68,7 @@ def deduct_balance_and_complete_contract(policy: Policy):
     client = policy.contract.client
     if client.balance >= policy.price:
         client.balance -= policy.price
-        policy.contract.is_completed = COMPLETED
+        policy.contract.status=COMPLETED
         client.save()
         policy.contract.save()
         policy.save()

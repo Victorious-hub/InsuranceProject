@@ -2,9 +2,8 @@ import logging
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
-from .constants import CREATED
 
-from .decorators import agent_required, client_required
+from .decorators import agent_required, client_required, superuser_required
 from .models import Answer, Company, Contract, Coupon, News
 from .forms import ContractForm, PolicyForm
 from django.views.generic import TemplateView
@@ -63,27 +62,6 @@ class ContractCreateView(View):
                 client_profile_url = reverse(self.success_url, kwargs={'pk': pk})
                 return redirect(client_profile_url)
         return render(request, self.template_name, {'form': form})
-
-
-# @method_decorator(client_required, name='dispatch')
-# class ContractSignView(View):
-#     template_name = 'client_actions/contract_sign.html'
-#     form_class = ContractForm
-#     success_url = 'client_profile'
-
-#     def get(self, request, pk):
-#         form = self.form_class()
-#         return render(request, self.template_name, {'form': form})
-
-#     def post(self, request, pk):
-#         form = self.form_class(request.POST)
-#         if form.is_valid():
-#             contract = contract_create(pk, form.data)
-#             if contract:
-#                 affiliate_logger.info(f"Created contract for client: {form.data.get('client')}")
-#                 client_profile_url = reverse(self.success_url, kwargs={'pk': pk})
-#                 return redirect(client_profile_url)
-#         return render(request, self.template_name, {'form': form})
 
 
 @method_decorator(client_required, name='dispatch')
@@ -190,6 +168,10 @@ class PolicyCreateView(View):
                 affiliate_logger.info(f"Policy for client: {request.user}")
                 agent_profile_url = reverse(self.success_url, kwargs={'pk': pk})
                 return redirect(agent_profile_url)
+        else:
+            for _, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
         return render(request, self.template_name, {'form': form})
 
 
@@ -202,6 +184,41 @@ class AgentContractsListView(View):
     def get(self, request, pk):
         contracts = get_client_contracts(pk)
         return render(request, self.template_name, {'contracts': contracts})
+    
+
+@method_decorator(client_required, name='dispatch')
+class DeleteClientContractView(View):
+    template_name = 'client_actions/delete_contract.html'
+    success_url = 'client_contracts'
+
+    def get(self, request, pk):
+        contract = get_client_contract(pk)
+        return render(request, self.template_name, {'contract': contract})
+
+    def post(self, request, pk):
+        contract = get_client_contract(pk)
+        contract.delete()
+        client_contracts = reverse(self.success_url, kwargs={'pk': pk})
+        return redirect(client_contracts)
+
+@method_decorator(client_required, name='dispatch')
+class ContractSignView(View):
+    template_name = 'client_actions/contract_sign.html'
+    success_url = 'client_contracts'
+
+    def get(self, request, pk):
+        contract = get_client_contract(pk)
+        return render(request, self.template_name, {'contract': contract})
+
+    def post(self, request, pk):
+        contract = get_client_contract(pk)
+        if contract:
+            contract.status = 2
+            contract.save()
+            affiliate_logger.info(f"Signed contract for client: {request.user}")
+            client_profile_url = reverse(self.success_url, kwargs={'pk': pk})
+            return redirect(client_profile_url)
+        return render(request, self.template_name)
     
     
 @method_decorator(agent_required, name='dispatch')
@@ -217,7 +234,6 @@ class SearchContractsView(View):
                 Q(client__user__email__contains=searched) | 
                 Q(client__user__first_name__contains=searched) | 
                 Q(client__user__last_name__contains=searched),
-                is_completed=CREATED
             )
             return render(request, self.template_search_name, {"searched": searched, "contracts": contracts})
         else:
@@ -261,9 +277,17 @@ class ConfirmPolicyCreateView(View):
             messages.error(request, "Coupon is not valid or not enough balance!")
             return render(request, self.template_name, {'policy': policy})
 
-
+@method_decorator(superuser_required, name='dispatch')
 class StatisticsView(View):
-    template_name = "admin_actions/statistics.html"
+    template_name = "statistics/base_statistics.html"
+
+    def get(self, request, pk):
+        return render(request, self.template_name)
+
+
+@method_decorator(superuser_required, name='dispatch')
+class CompanyStatisticsView(View):
+    template_name = "statistics/company_statistics.html"
 
     def get(self, request, pk):
         total_clients = client_list()
@@ -271,8 +295,8 @@ class StatisticsView(View):
         client_median = client_age_median()
         client_mean = client_age_mean()
         client_mode = client_age_mode()
-        plot_policy_sale()
-        policy_month_sale()
+        # plot_policy_sale()
+        # policy_month_sale()
         return render(
             request, 
             self.template_name, 
@@ -283,6 +307,23 @@ class StatisticsView(View):
                 'client_mean': client_mean,
                 'client_mode': client_mode
             })
+
+@method_decorator(superuser_required, name='dispatch')
+class CompanyPolicyChartDetailView(View):
+    template_name = "statistics/policy_sale_statistics.html"
+
+    def get(self, request, pk):
+        policy_sale_image = plot_policy_sale()
+        return render(request, self.template_name, {'policy_sale_image': policy_sale_image})
+
+# @method_decorator(superuser_required, name='dispatch')
+# class CompanyPolicyMonthChartDetailView(View):
+#     template_name = "statistics/policy_sale_statistics.html"
+
+#     def get(self, request, pk):
+#         policy_month_image = policy_month_sale()
+#         return render(request, self.template_name, {'policy_month_image': policy_month_image})
+        
 
 class CatFactView(View):
     template_name = 'main/cat_fact.html'

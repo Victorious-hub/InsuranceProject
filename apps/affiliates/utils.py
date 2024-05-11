@@ -1,11 +1,14 @@
 
+import base64
+import io
 import os
+from urllib import parse
 import requests
 from django.conf import settings
 import pandas as pd
 import matplotlib.pyplot as plt
-from apps.users.models import Client
-from .constants import COMPLETED
+from django.db.models import Count
+from apps.users.models import Affiliate, Client
 from .models import Policy
 from django.db.models import Sum
 from statistics import median, mean, mode
@@ -18,7 +21,7 @@ def client_list()->Client:
     return obj
 
 def policy_comleted_list_price()->Policy:
-    obj = Policy.objects.filter(contract__is_completed=COMPLETED).aggregate(Sum('price'))
+    obj = Policy.objects.filter(contract__status=4).aggregate(Sum('price'))
     return obj
 
 def client_age_median():
@@ -45,17 +48,27 @@ def get_age(name: str):
 
 
 def plot_policy_sale():
-    policies = Policy.objects.values('agent__affiliate')
-    df = pd.DataFrame.from_records(policies)
-    counts = df['agent__affiliate'].value_counts()
-    counts.plot(kind='bar')
+    confirmed_policies = Policy.objects.filter(
+            contract__status=3
+        )
+    affiliate_names = [policy.agent.affiliate.name for policy in confirmed_policies]
+    policy_counts = confirmed_policies.values('agent__affiliate').annotate(count=Count('id'))
 
-    plt.xlabel('Affiliate')
-    plt.ylabel('Number of Policies')
-    plt.title('Total Policies by Affiliate')
-    plt.savefig(os.path.join(settings.MEDIA_ROOT, 'total_policies_by_affiliate.png'))
+    bar_width = 0.5
+    plt.bar(affiliate_names, [pc['count'] for pc in policy_counts], width=bar_width)
 
-    plt.close()
+    plt.xlabel('Affiliate Name')
+    plt.ylabel('Policy Count')
+
+    plt.title(f"Confirmed Policies by Affiliates")
+
+    fig = plt.gcf()
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    url = parse.quote(string)
+    return url
 
 
 def policy_month_sale():
@@ -80,8 +93,11 @@ def policy_month_sale():
     plt.xticks(rotation=45)  
     plt.grid(axis='y', linestyle='--', alpha=0.7)  
 
-    plt.savefig(os.path.join(settings.MEDIA_ROOT, 'policy_month_sale.png'))
-
-    plt.close()
-
+    fig = plt.gcf()
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    url = parse.quote(string)
+    return url
     

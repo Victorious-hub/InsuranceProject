@@ -1,6 +1,6 @@
 
 from .utils import get_object
-from .models import Agent, Client, CustomUser, Feedback
+from .models import Affiliate, Agent, Client, CustomUser, Feedback
 from django.contrib.auth.hashers import make_password
 from datetime import datetime
 
@@ -10,7 +10,7 @@ def client_register(data) -> Client:
         last_name=data.get('last_name'),
         email=data.get('email'),
         password = make_password(data.get('password1')),
-        date_birth = datetime.strptime(data.get('date_birth'), "%dd-%mm-%yyyy"),
+        date_birth = datetime.strptime(data.get('date_birth'), "%Y-%m-%d"),
         is_client=True
     )
     user.save()
@@ -21,23 +21,6 @@ def client_register(data) -> Client:
     client.save()
     return client
 
-
-def agent_register(data) -> Client:
-    user = CustomUser(
-        first_name=data.get('first_name'),
-        last_name=data.get('last_name'),
-        email=data.get('email'),
-        is_staff = True,
-        password = make_password(data.get('password1')),
-        date_birth=data.get('date_birth')
-    )
-    user.save()
-    client = Agent(
-        user=user,
-    )
-    client.full_clean()
-    client.save()
-    return client
 
 def client_update(pk: int, data, profile_image) -> Client:
     client: Client = get_object(Client, user__id=pk)
@@ -72,6 +55,7 @@ def feedback_create(pk: int, data) -> Feedback:
     obj = Feedback.objects.create(
         client=client,
         title=data.get('title'),
+        affiliate=get_object(Affiliate, id=data.get('affiliate')),
         description=data.get('description'),
         rating=data.get('rating')
     )
@@ -79,9 +63,9 @@ def feedback_create(pk: int, data) -> Feedback:
     obj.save()
     return obj
 
-def balance_update(pk: int, data) -> Client:
+def balance_update(pk: int, balance: float) -> Client:
     client: Client = get_object(Client, user__id=pk)
-    client.balance += int(data.get('balance'))
+    client.balance += float(balance)
 
     client.save()
     return client

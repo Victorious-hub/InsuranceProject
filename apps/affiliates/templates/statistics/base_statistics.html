@@ -159,55 +159,14 @@
             <nav class="navbar">
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        {% if request.user.is_authenticated and request.user.is_client == True %}
-                            <li>
-                                <a href="{% url 'client_profile' user.id%}">Client Profile</a>
-                            </li>
-                        {% elif request.user.is_authenticated and request.user.is_staff == True and request.user.is_superuser != True%}
-                            <li>
-                                <a href="{% url 'agent_profile' user.id%}">Agent Profile</a>
-                            </li>
-                        {% elif request.user.is_authenticated and request.user.is_superuser == True %}
-                            <li>
-                                <a href="{% url 'admin:index' %}">Go to admin page</a>
-                            </li>
-                            <li>
-                                <a  href="{% url 'logout' %}">Logout</a>
-                              </li>
-                            <li>
-                                <a href="{% url 'stat' user.id %}">Check for statistics</a>
-                            </li>
-                        {% else %}
-                            <li>
-                                <a  href="{% url 'client_register'%}">Register</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'login'%}">Login</a>
-                            </li>
-                        {% endif %}
                         <li>
-                            <a href="{% url 'vacancy_list'%}">Check Vacancies</a>
+                            <a href="{% url 'company_statisctics' user.id%}">Company statistics</a>
                         </li>
                         <li>
-                            <a href="{% url 'feedback_list'%}">Check Feedbacks</a>
+                            <a href="{% url 'chart_statisctics' user.id%}">Policy sales total</a>
                         </li>
                         <li>
-                            <a href="{% url 'coupon_list'%}" >Available coupouns</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'affiliate_list'%}">Check Affiliates Info</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'insurance_list'%}">Check Insurance types</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'question_answer_list'%}">Question answers</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'age_predict'%}">Predict age</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'cat_fact'%}">Cat fact</a>
+                            <a href="{% url 'main' %}">Back to main</a>
                         </li>
                     </ul>
                 </div>
@@ -216,21 +175,6 @@
             <h1>{% block header %}{% endblock header %}</h1>
             <div>{% block content%}{% endblock content %}</div>
         </div>
-        <footer class="footer mt-auto py-3 bg-light">
-            <div class="container">
-                <marquee behavior="scroll" direction="left" scrollamount="5">
-                    Looking for news?. Check this
-                    <a href="{% url 'news_list'%}">News</a>
-                </marquee>            
-            </div>
-            <div class="container">
-                <span class="text-muted">Powered by Victor Shyshko. All rights reserverd. 2024</span>
-                <ul class="list-unstyled">
-                    <li><a href="https://github.com/Victorious-hub">Github repo</a></li>
-                    <li><a href="https://www.linkedin.com/in/victor-shyshko-205a04274/">LinkedIn repo</a></li>
-                </ul>
-            </div>
-        </footer>
     </div>
 </body>
 </html>

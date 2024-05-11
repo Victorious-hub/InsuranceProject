@@ -5,9 +5,9 @@
     <div class="kanban">
         <div class="kanban-column">
             {% if contracts %}
-                <h2>Not Confirmed</h2>
+                <h2>Created</h2>
                 {% for contract in contracts %}
-                    {% if contract.is_completed == 1 %}
+                    {% if contract.status == 1 %}
                         <div class="card mb-3">
                             <div class="card-body">
                                 <ul>
@@ -16,7 +16,25 @@
                                     <li>{{ contract.created_at }}</li>
                                     <li>{{ contract.insurance_object }}</li>
                                 </ul>
+                                <a href="{% url 'contract_sign' contract.id %}"btn btn-primary">Sign contract</a>
                                 <a href="{% url 'contract_delete' contract.id %}"btn btn-primary">Delete contract</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="kanban-column">
+                <h2>Signed</h2>
+                {% for contract in contracts %}
+                    {% if contract.status == 2 %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <ul>
+                                    <li>{{ contract.client }}</li>
+                                    <li>{{ contract.affiliate }}</li>
+                                    <li>{{ contract.created_at }}</li>
+                                    <li>{{ contract.insurance_object }}</li>
+                                </ul>
                             </div>
                         </div>
                     {% endif %}
@@ -25,7 +43,7 @@
             <div class="kanban-column">
                 <h2>Confirmed</h2>
                 {% for contract in contracts %}
-                    {% if contract.is_completed == 2 %}
+                    {% if contract.status == 3 %}
                         <div class="card mb-3">
                             <div class="card-body">
                                 <ul>
@@ -44,7 +62,7 @@
             <div class="kanban-column">
                 <h2>Completed</h2>
                 {% for contract in contracts %}
-                    {% if contract.is_completed == 3 %}
+                    {% if contract.status == 4 %}
                         <div class="card mb-3">
                             <div class="card-body">
                                 <ul>

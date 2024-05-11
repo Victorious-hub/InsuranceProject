@@ -1,0 +1,11 @@
+{% extends "statistics/base_statistics.html" %}
+{% block title %}Statistics{% endblock title %}
+{% block header %}Statistics{% endblock header %}
+
+{% block content %}
+    <form method="GET" action="" enctype='multipart/form-data' >
+        <ul>
+            <img src="data:image/png;base64,{{ policy_sale_image }}" height="300" width="500">
+        </ul>
+    </form>
+{% endblock content %}

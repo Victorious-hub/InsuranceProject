@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from .constants import CONTRACTS, INSURANCE
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
@@ -69,7 +68,11 @@ class PrivacyPolicy(models.Model):
 
 
 class InsuranceType(models.Model):
-    type = models.PositiveSmallIntegerField(max_length=20, choices=INSURANCE)
+    type = models.PositiveSmallIntegerField(max_length=20, choices=(
+        (10, 'Medical Insuracne'),
+        (20, 'House Insuracne'),
+        (30, 'Car'),
+    ))
     description = models.TextField()
 
     class Meta:
@@ -108,13 +111,19 @@ class InsuranceRisk(models.Model):
 
 
 class Contract(models.Model):
+    
     client = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
     affiliate = models.ForeignKey(Affiliate, on_delete=models.DO_NOTHING)
     insurance_type = models.ForeignKey(InsuranceType, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(auto_now_add=True)
     insurance_object = models.ForeignKey(InsuranceObject, on_delete=models.DO_NOTHING)
     insurance_risk = models.ManyToManyField(InsuranceRisk)
-    is_completed = models.PositiveSmallIntegerField(max_length=20, choices=CONTRACTS)
+    status = models.PositiveSmallIntegerField(max_length=20, choices=(
+        (1, 'Created'),
+        (2, 'Signed'),
+        (3, 'Confirmed'),
+        (4, 'Completed'),
+    ))
 
 
     class Meta:
