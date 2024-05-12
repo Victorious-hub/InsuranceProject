@@ -3,6 +3,9 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 
+from apps.users.models import Agent
+from apps.users.utils import get_object
+
 from .decorators import agent_required, client_required, superuser_required
 from .models import Answer, Company, Contract, Coupon, News
 from .forms import ContractForm, PolicyForm
@@ -185,7 +188,6 @@ class AgentContractsListView(View):
         contracts = get_client_contracts(pk)
         return render(request, self.template_name, {'contracts': contracts})
     
-
 @method_decorator(client_required, name='dispatch')
 class DeleteClientContractView(View):
     template_name = 'client_actions/delete_contract.html'
@@ -194,6 +196,24 @@ class DeleteClientContractView(View):
     def get(self, request, pk):
         contract = get_client_contract(pk)
         return render(request, self.template_name, {'contract': contract})
+
+    def post(self, request, pk):
+        contract = get_client_contract(pk)
+        contract.delete()
+        client_contracts = reverse(self.success_url, kwargs={'pk': pk})
+        return redirect(client_contracts)
+
+
+@method_decorator(client_required, name='dispatch')
+class UpdateClientContractView(View):
+    form_class = ContractForm
+    template_name = 'client_actions/update_contract.html'
+    success_url = 'client_contracts'
+
+    def get(self, request, pk): 
+        contract = get_client_contract(pk)
+        form = self.form_class(instance=contract)
+        return render(request, self.template_name, {'form': form})
 
     def post(self, request, pk):
         contract = get_client_contract(pk)
@@ -229,12 +249,15 @@ class SearchContractsView(View):
 
     def post(self, request, pk):
         searched = request.POST["searched"]
+        agent: Agent = get_object(Agent, user__id=pk)
         if len(searched) != 0:
             contracts = self.model.objects.filter(
                 Q(client__user__email__contains=searched) | 
                 Q(client__user__first_name__contains=searched) | 
                 Q(client__user__last_name__contains=searched),
-                status=2
+                status=2,
+                affiliate=agent.affiliate
+
             )
             return render(request, self.template_search_name, {"searched": searched, "contracts": contracts})
         else:

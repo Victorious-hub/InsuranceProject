@@ -9,6 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from django.db.models import Count
 from apps.users.models import Affiliate, Client
+from apps.users.utils import get_object
 from .models import Policy
 from django.db.models import Sum
 from statistics import median, mean, mode
@@ -48,27 +49,34 @@ def get_age(name: str):
 
 
 def plot_policy_sale():
-    confirmed_policies = Policy.objects.filter(
-            contract__status=3
-        )
-    affiliate_names = [policy.agent.affiliate.name for policy in confirmed_policies]
-    policy_counts = confirmed_policies.values('agent__affiliate').annotate(count=Count('id'))
+  confirmed_policies = Policy.objects.filter(contract__status=4)
+  policy_counts = confirmed_policies.values('agent__affiliate').annotate(count=Count('id'))
 
-    bar_width = 0.5
-    plt.bar(affiliate_names, [pc['count'] for pc in policy_counts], width=bar_width)
+  affiliates = [pc['agent__affiliate'] for pc in policy_counts]
+  counts = [pc['count'] for pc in policy_counts]
 
-    plt.xlabel('Affiliate Name')
-    plt.ylabel('Policy Count')
+  plt.bar([get_object(Affiliate, id=affiliate).name for affiliate in affiliates], counts)
+  plt.xticks(rotation=30, ha='right')  
 
-    plt.title(f"Confirmed Policies by Affiliates")
+  bar_label([get_object(Affiliate, id=affiliate).name for affiliate in affiliates], counts)
 
-    fig = plt.gcf()
-    buf = io.BytesIO()
-    fig.savefig(buf, format='png')
-    buf.seek(0)
-    string = base64.b64encode(buf.read())
-    url = parse.quote(string)
-    return url
+  plt.xlabel('Affiliate Name')
+  plt.ylabel('Policy Count')
+  plt.title(f"Confirmed Policies by Affiliates")
+
+  fig = plt.gcf()
+  buf = io.BytesIO()
+  fig.savefig(buf, format='png')
+  buf.seek(0)
+  string = base64.b64encode(buf.read())
+  url = parse.quote(string)
+  return url
+
+def bar_label(x, y):
+  for i, value in enumerate(y):
+    plt.text(x[i], value + 0.1, str(value), ha='center') 
+
+
 
 
 def policy_month_sale():
@@ -79,7 +87,7 @@ def policy_month_sale():
 
     for policy in policies:
         created_month = policy.created_at.month
-        if created_month <= today.month:  # Consider only policies created this year
+        if created_month <= today.month:
             month_counts[created_month] += 1
 
     month_labels = [str(month) for month in month_counts.keys()]

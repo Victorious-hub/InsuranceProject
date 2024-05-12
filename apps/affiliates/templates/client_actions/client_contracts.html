@@ -16,6 +16,7 @@
                                     <li>{{ contract.created_at }}</li>
                                     <li>{{ contract.insurance_object }}</li>
                                 </ul>
+                                <a href="{% url 'contract_udpate' contract.id %}"btn btn-primary">Update contract</a>
                                 <a href="{% url 'contract_sign' contract.id %}"btn btn-primary">Sign contract</a>
                                 <a href="{% url 'contract_delete' contract.id %}"btn btn-primary">Delete contract</a>
                             </div>

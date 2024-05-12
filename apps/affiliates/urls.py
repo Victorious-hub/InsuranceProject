@@ -22,7 +22,8 @@ from .views import (
     PolicyCreateView,
     QuestionAnswerListView,
     SearchContractsView,
-    StatisticsView, 
+    StatisticsView,
+    UpdateClientContractView, 
     VacnacyListView,
     AgePredictionView,
     CatFactView,
@@ -52,5 +53,6 @@ urlpatterns = [
     path('statisctics/<int:pk>', StatisticsView.as_view(), name='stat'),
     re_path(r'^statisctics/company/(?P<pk>\d+)$', CompanyStatisticsView.as_view(), name='company_statisctics'),
     path('statisctics/chart/<int:pk>', CompanyPolicyChartDetailView.as_view(), name='chart_statisctics'),
+    path('contract/update/<int:pk>', UpdateClientContractView.as_view(), name='contract_udpate')
     # path('statistics/month/sales/<int:pk>', CompanyPolicyMonthChartDetailView.as_view(), name='month_sales'),
 ] 

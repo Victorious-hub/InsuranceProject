@@ -57,12 +57,19 @@ def policy_create(pk: int, data) -> Policy:
     return obj
 
 def apply_discount_if_coupon_exists(policy: Policy, code: str):
-    if code:
-        coupon: Coupon = get_object(Coupon, code=code)
-        if coupon and coupon.active:
-            policy.price *= (coupon.discount / 100)
+    coupon: Coupon = get_object(Coupon, code=code)
+    price = policy.price
+    client = policy.contract.client
+    if coupon and coupon.active:
+        price *= (coupon.discount / 100)
+        if (policy.price - price) < client.balance:
+            policy.price -= price
             coupon.active = False
             coupon.save()
+            return True
+        else:
+            return False
+    return True
 
 def deduct_balance_and_complete_contract(policy: Policy):
     client = policy.contract.client
@@ -76,5 +83,7 @@ def deduct_balance_and_complete_contract(policy: Policy):
     return False
 
 def apply_coupon_and_pay(policy: Policy, code: str):
-    apply_discount_if_coupon_exists(policy, code)
-    return deduct_balance_and_complete_contract(policy)
+    if apply_discount_if_coupon_exists(policy, code):
+        return deduct_balance_and_complete_contract(policy)
+    else:
+        return False
