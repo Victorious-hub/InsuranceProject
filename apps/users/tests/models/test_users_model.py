@@ -13,7 +13,7 @@ def test_client_creation(client_factory):
     assert client.user.email == "test@gmail.com"
     assert isinstance(client, Client)
     assert client.user.is_staff is False
-    assert client.user.role == 1
+    assert client.user.is_client == True
 
 
 @pytest.mark.django_db
@@ -21,7 +21,7 @@ def test_agent_creation(agent_factory):
     agent: Agent = agent_factory.create()
     assert agent.user.email == "test_agent@gmail.com"
     assert isinstance(agent, Agent)
-    assert agent.user.role == 2
+    assert agent.user.is_staff == True
 
 @pytest.mark.django_db
 def test_client_model_fields(client_factory):

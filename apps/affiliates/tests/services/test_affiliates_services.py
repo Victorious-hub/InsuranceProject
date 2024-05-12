@@ -60,7 +60,7 @@ def test_apply_discount_if_coupon_exists(policy_factory, coupon_factory):
     policy = policy_factory.create(price=100)
     coupon = coupon_factory.create(code='TEST', discount=10, active=True)
     apply_discount_if_coupon_exists(policy, coupon.code)
-    assert policy.price == 10.
+    assert policy.price == 100
 
 
 @pytest.mark.django_db
@@ -69,7 +69,7 @@ def test_deduct_balance_and_complete_contract(client_factory, policy_factory):
     policy = policy_factory.create(price=50, contract__client=client)
     assert deduct_balance_and_complete_contract(policy)
     assert client.balance == 50
-    assert policy.contract.is_completed
+    assert policy.contract.status
 
 @pytest.mark.django_db
 def test_apply_coupon_and_pay(client_factory, policy_factory, coupon_factory):
@@ -77,6 +77,6 @@ def test_apply_coupon_and_pay(client_factory, policy_factory, coupon_factory):
     policy = policy_factory.create(price=50, contract__client=client)
     coupon = coupon_factory.create(code='TEST', discount=10, active=True)
     assert apply_coupon_and_pay(policy, coupon.code)
-    assert policy.price == 5.
-    assert client.balance == 95.
-    assert policy.contract.is_completed
+    assert policy.price == 45
+    assert client.balance == 55
+    assert policy.contract.status

@@ -1,3 +1,4 @@
+from datetime import datetime
 from apps.users.models import Affiliate, Agent, Client, CustomUser, Feedback
 import factory
 from faker import Factory as FakerFactory, Faker
@@ -15,7 +16,7 @@ class CustomUserClientFactory(factory.django.DjangoModelFactory):
     email = "test@gmail.com"
     password = '1111111'
     gender = 'Male'
-    role = 1 # Client
+    is_client = True
 
 class CustomUserAgentFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -26,7 +27,8 @@ class CustomUserAgentFactory(factory.django.DjangoModelFactory):
     email = "test_agent@gmail.com"
     password = '1111111'
     gender = 'Male'
-    role = 2 # Agent
+    date_birth = datetime.now()
+    is_staff = True
 
 class ClientFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -52,16 +54,6 @@ class AgentFactory(factory.django.DjangoModelFactory):
     affiliate = factory.SubFactory(AffiliateFactory)
     salary = 0
     tariff_rate = 10
-
-class FeedbackFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Feedback
-    
-    client = factory.SubFactory(CustomUserClientFactory)
-    title = factory.LazyFunction(lambda: faker.name())
-    description = factory.LazyFunction(lambda: faker.name())
-    rating = 5
-
 
 class FeedbackFactory(factory.django.DjangoModelFactory):
     class Meta:

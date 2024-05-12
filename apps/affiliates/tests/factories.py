@@ -1,6 +1,22 @@
-from apps.affiliates.models import Company, BaseModel, Contacts, Contract, Coupon, InsuranceObject, InsuranceRisk, News, Policy, Question, Answer, PrivacyPolicy, InsuranceType, Vacancy
-from apps.users.models import Agent
-from apps.users.tests.factories import AffiliateFactory, AgentFactory, ClientFactory
+from apps.affiliates.models import (
+    Company, 
+    Contract, 
+    Coupon, 
+    InsuranceObject, 
+    InsuranceRisk, 
+    News, 
+    Policy, 
+    Question, 
+    Answer, 
+    PrivacyPolicy, 
+    InsuranceType, 
+    Vacancy
+)
+from apps.users.tests.factories import (
+    AffiliateFactory, 
+    AgentFactory, 
+    ClientFactory
+)
 import factory
 from faker import Factory as FakerFactory, Faker
 
@@ -83,7 +99,7 @@ class ContractFactory(factory.django.DjangoModelFactory):
     affiliate = factory.SubFactory(AffiliateFactory)  # Assuming you have AffiliateFactory
     insurance_type = factory.SubFactory(InsuranceTypeFactory)
     insurance_object = factory.SubFactory(InsuranceObjectFactory)
-    is_completed = factory.LazyFunction(lambda: faker.random_int(min=1, max=5))
+    status = factory.LazyFunction(lambda: faker.random_int(min=1, max=4))
 
 
 class PolicyFactory(factory.django.DjangoModelFactory):

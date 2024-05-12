@@ -52,10 +52,11 @@ def agent_update(pk: int, data, profile_image) -> Agent:
 
 def feedback_create(pk: int, data) -> Feedback:
     client = get_object(Client, user__id=pk)
+    affiliate = get_object(Affiliate, id=data.get('affiliate'))
     obj = Feedback.objects.create(
         client=client,
         title=data.get('title'),
-        affiliate=get_object(Affiliate, id=data.get('affiliate')),
+        affiliate=affiliate,
         description=data.get('description'),
         rating=data.get('rating')
     )

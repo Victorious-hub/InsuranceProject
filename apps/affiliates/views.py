@@ -40,7 +40,8 @@ from .utils import (
 
 from .services import (
     apply_coupon_and_pay, 
-    contract_create, 
+    contract_create,
+    contract_update, 
     policy_create
 )
 
@@ -216,9 +217,11 @@ class UpdateClientContractView(View):
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, pk):
-        contract = get_client_contract(pk)
-        contract.delete()
-        client_contracts = reverse(self.success_url, kwargs={'pk': pk})
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            contract_update(request.user.id, form.data)
+            affiliate_logger.info(f"Register user: {form.data.get('first_name')}-{form.data.get('last_name')}")
+            client_contracts = reverse(self.success_url, kwargs={'pk': pk})
         return redirect(client_contracts)
 
 @method_decorator(client_required, name='dispatch')

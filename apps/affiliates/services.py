@@ -34,6 +34,15 @@ def contract_create(pk: int, data) -> Contract:
     obj.save()
     return obj
 
+def contract_update(pk: int, data):
+  contract = Contract.objects.filter(client__user__id=pk).last()
+  contract.affiliate = get_object(Affiliate, id=data.get('affiliate'))
+  contract.insurance_type = get_object(InsuranceType , id=data.get('insurance_type'))
+  contract.insurance_object = get_object(InsuranceObject, id=data.get('insurance_object'))
+  contract.insurance_risk.set(data.get('insurance_risk'))  # Use set() for many-to-many
+  contract.save()
+  return contract
+
 
 def policy_create(pk: int, data) -> Policy:
     agent: Agent = get_object(Agent, user__id=pk)

@@ -44,7 +44,6 @@ class ClientRegistrationView(View):
 
     def post(self, request):
         form = self.form_class(request.POST)
-        print(form.data.get('birth_date'))
         if form.is_valid():
             client_register(form.data)
             user_logger.info(f"Register user: {form.data.get('first_name')}-{form.data.get('last_name')}")
